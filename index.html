@@ -440,12 +440,52 @@
              const json = await res.json();
              
              if(json.status === 'success') {
-                 dataSiswa = json.data.siswa || [];
-                 dataTarif = json.data.tarif || [];
+                 
+                 // --- DATA SANITIZER (MENCEGAH GOOGLE SHEETS AUTO-FORMAT BUGS) ---
+                 dataSiswa = (json.data.siswa || []).map(s => {
+                    s.pin = String(s.pin);
+                    s.hp = String(s.hp);
+                    return s;
+                 });
+                 
+                 dataTarif = (json.data.tarif || []).map(t => {
+                    t.reg = parseInt(t.reg) || 0;
+                    t.over = parseInt(t.over) || 0;
+                    return t;
+                 });
+                 
                  dataAdmin = json.data.admin || [];
-                 // FIXED: Memastikan setiap log dari API punya Primary Key (idLog) jika data lama belum punya
+                 
                  dataLog = (json.data.log || []).map(l => {
+                    // Beri ID unik jika terlewat
                     if (!l.idLog) l.idLog = "log-" + Date.now() + Math.random().toString(36).substr(2, 5);
+                    
+                    // Kembalikan tarif sebagai angka agar kalkulasi Dashboard tidak rusak
+                    l.reg = parseInt(l.reg) || 0;
+                    l.over = parseInt(l.over) || 0;
+
+                    // FIX: Jika Google Sheets mengubah string "2026-04" menjadi format Date panjang
+                    if (l.bulan && l.bulan.length > 7) {
+                        try {
+                            const d = new Date(l.bulan);
+                            if (!isNaN(d.getTime())) {
+                                l.bulan = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0');
+                            }
+                        } catch(e){}
+                    }
+
+                    // FIX: Jika Google Sheets mengubah string tanggal jam menjadi format Date panjang
+                    if (l.tgl && l.tgl.length > 20) {
+                        try {
+                            const d = new Date(l.tgl);
+                            if (!isNaN(d.getTime())) {
+                                const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+                                const jam = d.getHours().toString().padStart(2, '0');
+                                const mnt = d.getMinutes().toString().padStart(2, '0');
+                                l.tgl = `${d.getDate().toString().padStart(2, '0')} ${mNames[d.getMonth()]} ${d.getFullYear()} ${jam}:${mnt}`;
+                            }
+                        } catch(e){}
+                    }
                     return l;
                  });
              } else {
@@ -475,17 +515,23 @@
           { nama: "TK All Days", jenjang: "TK A, TK B", hari: "Senin, Selasa, Rabu, Kamis, Jumat, Sabtu", reg: 25000, over: 35000 },
           { nama: "SD Atas Weekday", jenjang: "SD Kelas 4, SD Kelas 5, SD Kelas 6", hari: "Senin, Rabu, Jumat", reg: 35000, over: 50000 }
         ];
+        
         const curDateObj = new Date();
-        const curYearMonth = curDateObj.toISOString().slice(0, 7); 
-        const curMonthName = curDateObj.toLocaleDateString("id-ID", { month: "short" });
+        const curYearMonth = curDateObj.getFullYear() + "-" + String(curDateObj.getMonth() + 1).padStart(2, '0');
+        const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+        const curMonthName = mNames[curDateObj.getMonth()];
         const curYearStr = curDateObj.getFullYear();
+        
         dataLog = [
             { idLog: "log-1000", idSiswa: "S-001", nama: "Budi Santoso", hari: "Senin", tgl: `05 ${curMonthName} ${curYearStr} 14:00`, status: "Hadir", reg: 35000, over: 0, bulan: curYearMonth, tglObj: new Date() }
         ];
       }
 
       function initUIComponents() {
-        const curMonth = new Date().toISOString().slice(0, 7);
+        // Ambil bulan sekarang yang aman dari issue Timezone
+        const dDate = new Date();
+        const curMonth = dDate.getFullYear() + "-" + String(dDate.getMonth() + 1).padStart(2, '0');
+        
         document.getElementById("dashBulan").value = curMonth;
         document.getElementById("pw-filter-bulan").value = curMonth;
         document.getElementById("searchLogBulan").value = curMonth;
@@ -760,9 +806,14 @@
         if(!siswa) return Swal.fire("Oops", "Data siswa tidak ditemukan di database!", "error");
 
         const curDateObj = new Date();
-        const curYearMonth = curDateObj.toISOString().slice(0, 7); 
-        const curMonthName = curDateObj.toLocaleDateString("id-ID", { month: "short" });
+        // Memakai Timezone Lokal secara eksplisit
+        const curYearMonth = curDateObj.getFullYear() + "-" + String(curDateObj.getMonth() + 1).padStart(2, '0'); 
+        
+        // Array bulan yang tidak akan berubah meski browser bahasa inggris/indonesia
+        const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+        const curMonthName = mNames[curDateObj.getMonth()];
         const curYearStr = curDateObj.getFullYear();
+        
         const hariHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
         const hariName = hariHari[curDateObj.getDay()];
         
