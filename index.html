@@ -334,7 +334,22 @@
                   <button class="btn btn-success btn-sm" onclick="exportExcel('tabelInvoice', 'Laporan')"><i class="bi bi-file-earmark-excel"></i> <span class="d-none d-sm-inline">Export All</span></button>
                 </div>
               </div>
-              <div class="p-3 border-bottom" style="background-color: rgba(0, 0, 0, 0.02);"><div class="row g-2"><div class="col-md-6"><div class="input-icon-wrapper"><i class="bi bi-search"></i><input type="text" id="searchLapName" list="listSiswaSuggestion" class="form-control" placeholder="Cari Nama Siswa..." oninput="filterLaporan()" /></div></div><div class="col-md-6"><div class="input-icon-wrapper"><i class="bi bi-calendar-month"></i><input type="month" id="searchLapBulan" class="form-control" onchange="filterLaporan()" /></div></div></div></div>
+              <div class="p-3 border-bottom" style="background-color: rgba(0, 0, 0, 0.02);">
+                <div class="row g-2">
+                  <div class="col-md-4"><div class="input-icon-wrapper"><i class="bi bi-search"></i><input type="text" id="searchLapName" list="listSiswaSuggestion" class="form-control" placeholder="Cari Nama Siswa..." oninput="filterLaporan()" /></div></div>
+                  <div class="col-md-4"><div class="input-icon-wrapper"><i class="bi bi-calendar-month"></i><input type="month" id="searchLapBulan" class="form-control" onchange="filterLaporan()" /></div></div>
+                  <div class="col-md-4">
+                    <div class="input-icon-wrapper">
+                      <i class="bi bi-funnel"></i>
+                      <select id="searchLapStatus" class="form-select" onchange="filterLaporan()">
+                        <option value="all">Semua Status</option>
+                        <option value="Lunas">Sudah Lunas</option>
+                        <option value="Belum">Belum Lunas</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="table-responsive"><table class="table table-hover" id="tabelInvoice"><thead><tr><th>Siswa</th><th>Nominal Reguler</th><th>Nominal Overtime</th><th>Total Tagihan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="body-tabel-laporan"></tbody></table></div>
             </div>
           </div>
@@ -393,6 +408,7 @@
       let dataTarif = [];
       let dataLog = [];
       let dataAdmin = []; 
+      let dataPembayaran = []; // State Pembayaran Lunas
       
       // State ID Edit & Scanner
       let editSiswaId = null;
@@ -455,6 +471,7 @@
                  });
                  
                  dataAdmin = json.data.admin || [];
+                 dataPembayaran = json.data.pembayaran || []; // Tarik status lunas
                  
                  dataLog = (json.data.log || []).map(l => {
                     // Beri ID unik jika terlewat
@@ -524,6 +541,10 @@
         
         dataLog = [
             { idLog: "log-1000", idSiswa: "S-001", nama: "Budi Santoso", hari: "Senin", tgl: `05 ${curMonthName} ${curYearStr} 14:00`, status: "Hadir", reg: 35000, over: 0, bulan: curYearMonth, tglObj: new Date() }
+        ];
+        
+        dataPembayaran = [
+            { idTagihan: "S-001-" + curYearMonth, idSiswa: "S-001", bulan: curYearMonth, status: "Lunas" }
         ];
       }
 
@@ -1030,6 +1051,7 @@
       function filterLaporan() {
         const srcName = document.getElementById("searchLapName").value.toLowerCase();
         const bln = document.getElementById("searchLapBulan").value;
+        const statusFilter = document.getElementById("searchLapStatus").value;
         const tbody = document.getElementById("body-tabel-laporan");
         let htmlStr = "";
         let grouped = {};
@@ -1040,7 +1062,18 @@
         });
 
         Object.keys(grouped).forEach((k) => {
+          let isLunas = dataPembayaran.some(p => p.idSiswa === k && p.bulan === bln && p.status === 'Lunas');
+          
+          if (statusFilter === 'Lunas' && !isLunas) return;
+          if (statusFilter === 'Belum' && isLunas) return;
+
           let g = grouped[k]; let tot = g.reg + g.over; let idRow = "det-" + k; let detailHtml = "";
+          
+          let statusBadge = isLunas ? '<span class="badge bg-success">Lunas</span>' : '<span class="badge bg-danger">Belum</span>';
+          let btnLunasClass = isLunas ? 'btn-outline-danger' : 'btn-outline-success';
+          let btnLunasIcon = isLunas ? 'bi-x-circle' : 'bi-check-circle';
+          let btnLunasText = isLunas ? 'Batal Lunas' : 'Set Lunas';
+
           g.details.forEach((d) => {
             let typeClass = d.status === "Hadir" ? "" : "text-warning fw-bold";
             let tglPart = d.tgl.split(' ');
@@ -1055,10 +1088,11 @@
             <td class="text-nowrap-mobile">Rp ${g.reg.toLocaleString("id-ID")}</td>
             <td class="text-nowrap-mobile">Rp ${g.over.toLocaleString("id-ID")}</td>
             <td class="text-nowrap-mobile fw-bold text-danger">Rp ${tot.toLocaleString("id-ID")}</td>
-            <td><span class="badge bg-danger">Belum</span></td>
+            <td>${statusBadge}</td>
             <td class="text-nowrap">
               <div class="d-flex gap-1 flex-wrap">
                 <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#${idRow}"><i class="bi bi-chevron-down"></i> <span class="d-none d-md-inline">Detail</span></button>
+                <button class="btn btn-sm ${btnLunasClass}" onclick="toggleLunas('${k}', '${bln}')"><i class="bi ${btnLunasIcon}"></i> <span class="d-none d-md-inline">${btnLunasText}</span></button>
                 <button class="btn btn-sm btn-primary" onclick="cetakInvoice('${k}')"><i class="bi bi-file-pdf"></i> <span class="d-none d-md-inline">PDF</span></button>
                 <button class="btn btn-sm btn-success" onclick="kirimWA('${k}')"><i class="bi bi-whatsapp"></i> <span class="d-none d-md-inline">WA</span></button>
               </div>
@@ -1078,8 +1112,34 @@
             </td>
           </tr>`;
         });
-        if(htmlStr === "") htmlStr = `<tr><td colspan="6" class="text-center text-muted">Tidak ada rincian tagihan pada bulan ini.</td></tr>`;
+        if(htmlStr === "") htmlStr = `<tr><td colspan="6" class="text-center text-muted">Tidak ada rincian tagihan pada pencarian ini.</td></tr>`;
         tbody.innerHTML = htmlStr;
+      }
+
+      // FITUR TOGGLE LUNAS
+      function toggleLunas(idSiswa, bln) {
+        const idTagihan = idSiswa + "-" + bln;
+        const index = dataPembayaran.findIndex(p => p.idTagihan === idTagihan);
+        
+        if (index > -1) {
+            // Batalkan Lunas
+            dataPembayaran.splice(index, 1);
+            sendToAPI('hapusPembayaran', { idTagihan: idTagihan });
+            Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Status diubah ke Belum Lunas', showConfirmButton: false, timer: 2000 });
+        } else {
+            // Set Lunas
+            const newBayar = { idTagihan: idTagihan, idSiswa: idSiswa, bulan: bln, status: 'Lunas' };
+            dataPembayaran.push(newBayar);
+            sendToAPI('tambahPembayaran', newBayar);
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tagihan ditandai Lunas!', showConfirmButton: false, timer: 2000 });
+        }
+        
+        filterLaporan(); // Refresh Laporan Table
+        
+        // Refresh Portal Wali jika sedang terbuka
+        if (!document.getElementById("pw-detail-view").classList.contains("d-none")) {
+            renderDataWali();
+        }
       }
 
       function cetakInvoice(idSiswa) {
@@ -1100,8 +1160,13 @@
         });
         let grandTotal = totalReg + totalOver;
         let tglCetak = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        
+        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
+        let statusTagihanHtml = isLunas 
+            ? `<div style="margin-top: 10px; color: #10b981; font-weight: bold; font-size: 16px; border: 2px solid #10b981; padding: 5px; text-align: center; border-radius: 5px;">LUNAS</div>` 
+            : `<div style="margin-top: 10px; color: #ef4444; font-weight: bold; font-size: 16px; border: 2px solid #ef4444; padding: 5px; text-align: center; border-radius: 5px;">BELUM LUNAS</div>`;
 
-        const invoiceHTML = `<html><head><title>Invoice - ${siswa.nama}</title><style>@page { size: A5 portrait; margin: 15mm; } body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #333; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .invoice-box { max-width: 100%; margin: auto; } .header-table { width: 100%; margin-bottom: 20px; border-bottom: 2px solid #0084ff; padding-bottom: 10px; } .header-table td { vertical-align: top; } .title { font-size: 20px; font-weight: bold; color: #0084ff; letter-spacing: 1px; } .subtitle { font-size: 10px; color: #64748b; } .info-table { width: 100%; margin-bottom: 20px; font-size: 11px; } .info-table td { padding: 3px 0; vertical-align: top; } .info-table td:nth-child(1) { width: 80px; font-weight: bold; color: #555; } .info-table td:nth-child(2) { width: 15px; text-align: center; } .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; } .data-table th, .data-table td { padding: 6px 8px; border-bottom: 1px solid #eee; } .data-table th { background: #f8fafd; font-weight: bold; text-align: left; color: #444; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; } .text-right { text-align: right; } .total-section { float: right; width: 220px; font-size: 11px; } .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; } .grand-total { font-weight: bold; font-size: 14px; color: #ef4444; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; } .footer { text-align: center; margin-top: 50px; clear: both; font-size: 9px; color: #888; border-top: 1px solid #eee; padding-top: 10px;}</style></head><body onload="setTimeout(() => { window.print(); window.close(); }, 500)"><div class="invoice-box"><table class="header-table"><tr><td><div class="title">INVOICE TAGIHAN</div><div class="subtitle">Bimbel Bee</div></td><td class="text-right" style="font-size: 10px;"><strong>Periode:</strong> ${bln}<br><strong>Tanggal Cetak:</strong> ${tglCetak}</td></tr></table><table style="width: 100%; margin-bottom: 15px;"><tr><td style="width: 55%; vertical-align: top;"><table class="info-table"><tr><td>Nama Siswa</td><td>:</td><td>${siswa.nama}</td></tr><tr><td>ID Siswa</td><td>:</td><td>${siswa.id}</td></tr><tr><td>Jenjang</td><td>:</td><td>${siswa.jenjang}</td></tr></table></td><td style="width: 45%; vertical-align: top;"><table class="info-table"><tr><td>Nama Wali</td><td>:</td><td>${siswa.wali}</td></tr><tr><td>No. HP (WA)</td><td>:</td><td>${siswa.hp}</td></tr></table></td></tr></table><table class="data-table"><thead><tr><th>Hari, Tanggal & Waktu</th><th>Tipe Kehadiran</th><th class="text-right">Tarif Kehadiran</th></tr></thead><tbody>${detailHtml}</tbody></table><div class="total-section"><div class="total-row"><span>Total Reguler</span><span>Rp ${totalReg.toLocaleString("id-ID")}</span></div><div class="total-row"><span>Total Overtime</span><span>Rp ${totalOver.toLocaleString("id-ID")}</span></div><div class="grand-total"><span>TOTAL TAGIHAN</span><span>Rp ${grandTotal.toLocaleString("id-ID")}</span></div></div><div class="footer">Terima kasih atas kepercayaan Anda kepada kami.<br>Dokumen ini dihasilkan secara otomatis oleh sistem.</div></div></body></html>`;
+        const invoiceHTML = `<html><head><title>Invoice - ${siswa.nama}</title><style>@page { size: A5 portrait; margin: 15mm; } body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #333; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .invoice-box { max-width: 100%; margin: auto; } .header-table { width: 100%; margin-bottom: 20px; border-bottom: 2px solid #0084ff; padding-bottom: 10px; } .header-table td { vertical-align: top; } .title { font-size: 20px; font-weight: bold; color: #0084ff; letter-spacing: 1px; } .subtitle { font-size: 10px; color: #64748b; } .info-table { width: 100%; margin-bottom: 20px; font-size: 11px; } .info-table td { padding: 3px 0; vertical-align: top; } .info-table td:nth-child(1) { width: 80px; font-weight: bold; color: #555; } .info-table td:nth-child(2) { width: 15px; text-align: center; } .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; } .data-table th, .data-table td { padding: 6px 8px; border-bottom: 1px solid #eee; } .data-table th { background: #f8fafd; font-weight: bold; text-align: left; color: #444; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; } .text-right { text-align: right; } .total-section { float: right; width: 220px; font-size: 11px; } .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; } .grand-total { font-weight: bold; font-size: 14px; color: #ef4444; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; } .footer { text-align: center; margin-top: 50px; clear: both; font-size: 9px; color: #888; border-top: 1px solid #eee; padding-top: 10px;}</style></head><body onload="setTimeout(() => { window.print(); window.close(); }, 500)"><div class="invoice-box"><table class="header-table"><tr><td><div class="title">INVOICE TAGIHAN</div><div class="subtitle">Bimbel Bee</div></td><td class="text-right" style="font-size: 10px;"><strong>Periode:</strong> ${bln}<br><strong>Tanggal Cetak:</strong> ${tglCetak}</td></tr></table><table style="width: 100%; margin-bottom: 15px;"><tr><td style="width: 55%; vertical-align: top;"><table class="info-table"><tr><td>Nama Siswa</td><td>:</td><td>${siswa.nama}</td></tr><tr><td>ID Siswa</td><td>:</td><td>${siswa.id}</td></tr><tr><td>Jenjang</td><td>:</td><td>${siswa.jenjang}</td></tr></table></td><td style="width: 45%; vertical-align: top;"><table class="info-table"><tr><td>Nama Wali</td><td>:</td><td>${siswa.wali}</td></tr><tr><td>No. HP (WA)</td><td>:</td><td>${siswa.hp}</td></tr></table></td></tr></table><table class="data-table"><thead><tr><th>Hari, Tanggal & Waktu</th><th>Tipe Kehadiran</th><th class="text-right">Tarif Kehadiran</th></tr></thead><tbody>${detailHtml}</tbody></table><div class="total-section"><div class="total-row"><span>Total Reguler</span><span>Rp ${totalReg.toLocaleString("id-ID")}</span></div><div class="total-row"><span>Total Overtime</span><span>Rp ${totalOver.toLocaleString("id-ID")}</span></div><div class="grand-total"><span>TOTAL TAGIHAN</span><span>Rp ${grandTotal.toLocaleString("id-ID")}</span></div>${statusTagihanHtml}</div><div class="footer">Terima kasih atas kepercayaan Anda kepada kami.<br>Dokumen ini dihasilkan secara otomatis oleh sistem.</div></div></body></html>`;
         const printWin = window.open("", "_blank"); printWin.document.write(invoiceHTML); printWin.document.close();
       }
 
@@ -1187,6 +1252,7 @@
 
       function renderDataWali() {
         const nama = document.getElementById("pw-nama").innerText;
+        const idSiswa = document.getElementById("pw-id").innerText; // Ambil ID untuk check Lunas
         const bln = document.getElementById("pw-filter-bulan").value;
         const tbody = document.getElementById("pw-tabel-rincian");
         let htmlStr = ""; let sReg = 0, sOver = 0;
@@ -1201,9 +1267,18 @@
 
             htmlStr += `<tr><td class="fw-bold">${l.hari}, ${tglSaja}<br><small class="text-muted fw-normal">${jamSaja} WIB</small></td><td><span class="badge bg-${b}">${l.status}</span></td><td>Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
         });
+        
         if (htmlStr === "") htmlStr = `<tr><td colspan="3" class="text-center text-muted">Belum ada data kehadiran bulan ini.</td></tr>`;
         tbody.innerHTML = htmlStr;
-        document.getElementById("pw-sum-reguler").innerText = `Rp ${sReg.toLocaleString("id-ID")}`; document.getElementById("pw-sum-overtime").innerText = `Rp ${sOver.toLocaleString("id-ID")}`; document.getElementById("pw-sum-total").innerText = `Rp ${(sReg + sOver).toLocaleString("id-ID")}`;
+        
+        document.getElementById("pw-sum-reguler").innerText = `Rp ${sReg.toLocaleString("id-ID")}`; 
+        document.getElementById("pw-sum-overtime").innerText = `Rp ${sOver.toLocaleString("id-ID")}`; 
+        
+        // Cek Status Lunas
+        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
+        let stampHtml = isLunas ? `<div class="mt-2"><span class="badge bg-success w-100 py-2"><i class="bi bi-check-circle"></i> SUDAH LUNAS</span></div>` : '';
+        
+        document.getElementById("pw-sum-total").innerHTML = `Rp ${(sReg + sOver).toLocaleString("id-ID")} ${stampHtml}`;
       }
 
       function kembaliKeSearch() {
