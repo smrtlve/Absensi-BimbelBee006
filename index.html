@@ -3,10 +3,7 @@
 <html lang="id" data-bs-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Portal Absensi Les - Bimbel Bee ✨</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -20,7 +17,7 @@
       // PENGATURAN DATABASE GOOGLE APPS SCRIPT (GAS)
       // =========================================================================
       // TODO: Masukkan Link Web App Google Apps Script Anda ke variabel di bawah ini
-      const GAS_URL = 'https://script.google.com/macros/s/AKfycbxOmaKZ9unLHxZuOckEgQKwgRWGS1u5-4QGA6ylrdRmSt8FEEmCuqSWrDJCE6bx8D49/exec';
+      const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcvDbY8Y3-GdbePvCgjixYXVZemi3axIdg2rN6i8EepsE1mk-jp5AQ6oYJjycrt3QV/exec'; // Contoh: 'https://script.google.com/macros/s/AKfyc.../exec'
     </script>
 
     <style>
@@ -158,7 +155,7 @@
       </div>
 
       <div id="pw-search-view" class="fade-transition min-vh-100 d-flex align-items-center justify-content-center flex-column px-3">
-        <div class="text-center mb-4">
+        <div class="text-center mb-4 mt-4">
           <svg width="100" height="100" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="mb-4" style="filter: drop-shadow(0 10px 15px rgba(0, 132, 255, 0.2));">
             <path d="M10 90 L 60 100 L 60 30 L 10 20 Z" fill="#e2e8f0"/><path d="M10 85 L 60 95 L 60 25 L 10 15 Z" fill="#cbd5e1"/><path d="M10 80 L 60 90 L 60 20 L 10 10 Z" fill="#ffffff"/><path d="M110 90 L 60 100 L 60 30 L 110 20 Z" fill="#e2e8f0"/><path d="M110 85 L 60 95 L 60 25 L 110 15 Z" fill="#cbd5e1"/><path d="M110 80 L 60 90 L 60 20 L 110 10 Z" fill="#f8fafc"/><path d="M60 20 L 60 100" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/><path d="M 25 35 L 45 39 M 20 50 L 45 55 M 25 65 L 45 69 M 20 80 L 35 83" stroke="#0084ff" stroke-width="3" stroke-linecap="round"/><path d="M 95 35 L 75 39 M 100 50 L 75 55 M 95 65 L 75 69 M 100 80 L 85 83" stroke="#0084ff" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
           </svg>
@@ -540,7 +537,11 @@
                   showCancelButton: true,
                   didOpen: () => {
                     const inputSwal = Swal.getInput();
-                    inputSwal.addEventListener('keydown', (e) => { if (e.key === 'Enter') Swal.clickConfirm(); });
+                    if(inputSwal) {
+                      inputSwal.addEventListener('keydown', (e) => { 
+                        if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
+                      });
+                    }
                   }
                 });
                 
@@ -1113,7 +1114,11 @@
           showCancelButton: true,
           didOpen: () => {
             const inputSwal = Swal.getInput();
-            inputSwal.addEventListener('keydown', (e) => { if (e.key === 'Enter') Swal.clickConfirm(); });
+            if(inputSwal) {
+              inputSwal.addEventListener('keydown', (e) => { 
+                if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
+              });
+            }
           }
         });
         if (!pin) return; 
@@ -1167,9 +1172,12 @@
           didOpen: () => {
             const input1 = document.getElementById('swal-input1');
             const input2 = document.getElementById('swal-input2');
-            const confirmBtn = Swal.getConfirmButton();
-            input1.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmBtn.click(); });
-            input2.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmBtn.click(); });
+            input1.addEventListener('keydown', (e) => { 
+              if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
+            });
+            input2.addEventListener('keydown', (e) => { 
+              if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
+            });
           },
           preConfirm: () => {
             return [ document.getElementById('swal-input1').value, document.getElementById('swal-input2').value ]
