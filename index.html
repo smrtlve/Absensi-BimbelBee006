@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Portal Absensi Les - Bimbel Bee ✨</title>
 
-    <!-- Eksekusi Theme Paling Awal agar tidak Flash Putih -->
+    <!-- Eksekusi Theme Paling Awal agar tidak Flash Putih saat Refresh -->
     <script>
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute("data-bs-theme", savedTheme);
@@ -17,6 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- Tambahan Library untuk Fitur Share Gambar (Generate Struk) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
       // =========================================================================
@@ -90,16 +92,23 @@
       .form-control:focus, .form-select:focus { background-color: var(--bg-color); color: var(--text-main); border-color: var(--primary-color); box-shadow: 0 0 0 0.25rem rgba(0, 132, 255, 0.25); }
       .input-icon-wrapper { position: relative; width: 100%; }
       .input-icon-wrapper i { position: absolute; top: 50%; transform: translateY(-50%); left: 0.85rem; color: var(--text-muted); pointer-events: none; z-index: 5; }
-      .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.3rem !important; }
+      /* PERBAIKAN: Padding diperbesar agar text "Cari Nama Siswa..." tidak nabrak ikon */
+      .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.6rem !important; }
       
       input[type="date"], input[type="month"], input[type="time"] { position: relative; color: var(--text-main) !important; }
       input[type="date"]::-webkit-calendar-picker-indicator, input[type="month"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: auto; height: auto; color: transparent; background: transparent; cursor: pointer; }
 
-      /* Modifikasi Form SweetAlert Khusus Dark Mode */
-      [data-bs-theme="dark"] .swal2-popup { background-color: var(--card-bg); color: var(--text-main); }
-      [data-bs-theme="dark"] .swal2-title, [data-bs-theme="dark"] .swal2-html-container { color: var(--text-main); }
-      [data-bs-theme="dark"] .swal2-input, [data-bs-theme="dark"] .swal2-select { background-color: var(--bg-color); color: var(--text-main); border-color: var(--border-color); }
+      /* =========================================================================
+         MODIFIKASI KHUSUS TEMA DARK (SWAL & TABLE)
+         ========================================================================= */
+      [data-bs-theme="dark"] .swal2-popup { background-color: var(--card-bg) !important; color: var(--text-main) !important; }
+      [data-bs-theme="dark"] .swal2-title, [data-bs-theme="dark"] .swal2-html-container { color: var(--text-main) !important; }
+      [data-bs-theme="dark"] .swal2-input, [data-bs-theme="dark"] .form-control { background-color: var(--bg-color) !important; color: var(--text-main) !important; border-color: var(--border-color) !important; }
       [data-bs-theme="dark"] .swal2-input::placeholder { color: var(--text-muted); }
+      
+      /* PERBAIKAN: Membunuh background table bawaan Bootstrap yang membuat teks "nge-block" di mode dark */
+      .table { --bs-table-bg: transparent; --bs-table-striped-bg: transparent; --bs-table-hover-bg: transparent; }
+      .table td, .table th { background-color: transparent !important; }
 
       /* Table Styles */
       .table-responsive { border-radius: 0 0 12px 12px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } 
@@ -143,9 +152,6 @@
         .mobile-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1055; backdrop-filter: blur(3px); }
         .mobile-overlay.show { display: block; }
         
-        /* Pengecilan Input Icon Wrapper khusus Mobile untuk menghindari tabrakan padding */
-        .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.5rem !important; }
-
         /* TRANSFORMASI TABEL MENJADI MOBILE CARDS */
         .table-responsive { overflow: visible; } /* Matikan Scroll Horizontal */
         .table-responsive .table { border-collapse: separate; border-spacing: 0 12px; margin-top: -12px; min-width: 100%; border: none; }
@@ -229,6 +235,13 @@
     </style>
   </head>
   <body>
+    <!-- KANVAS STRUK INVOICE (Disembunyikan, untuk fitur share gambar) -->
+    <div id="receipt-container-wrapper" style="position: absolute; top: -9999px; left: -9999px; z-index: -99;">
+        <div id="receipt-template" style="width: 400px; background: #ffffff; color: #1e293b; padding: 25px; font-family: 'Nunito', sans-serif; border-radius: 16px; border: 1px solid #e2e8f0; box-sizing: border-box;">
+            <!-- Render Struk Dinamis di sini -->
+        </div>
+    </div>
+
     <!-- LOADING OVERLAY SAAT FETCH DATA DARI GOOGLE APPS SCRIPT -->
     <div id="api-loader">
         <div class="loader-spinner"></div>
@@ -246,6 +259,8 @@
           <h5 class="m-0 fw-bold">Bimbel<span class="text-primary">Bee</span> <small class="text-muted fw-normal d-none d-sm-inline">| Portal Wali</small></h5>
         </div>
         <div class="d-flex align-items-center gap-2">
+          <!-- PERBAIKAN: Tombol Sync/Refresh Data Manual -->
+          <button class="btn btn-light shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="refreshDataBtn()" title="Refresh Data"><i class="bi bi-arrow-clockwise text-primary"></i></button>
           <button class="btn btn-light shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="toggleTheme()" id="themeToggleBtnWali"><i class="bi bi-moon-fill text-secondary"></i></button>
           <button class="btn btn-outline-primary rounded-pill px-3 py-1 fw-bold" onclick="showAdminPortal()"><i class="bi bi-person-lock"></i> <span class="d-none d-sm-inline">Login Admin</span><span class="d-inline d-sm-none">Admin</span></button>
         </div>
@@ -327,6 +342,8 @@
           <div class="d-flex align-items-center gap-3"><button class="btn btn-sm btn-light d-md-none" onclick="toggleSidebar()"><i class="bi bi-list"></i></button><h5 class="m-0 fw-bold d-none d-sm-block" id="pageTitle">Dashboard</h5></div>
           <div class="d-flex align-items-center gap-2">
             <div id="realtime-clock" class="fw-bold text-primary small d-none d-sm-block px-2"></div>
+            <!-- PERBAIKAN: Tombol Sync/Refresh Data Manual -->
+            <button class="btn btn-sm btn-light rounded-circle" onclick="refreshDataBtn()" title="Sinkronkan/Refresh Data Terbaru"><i class="bi bi-arrow-clockwise text-primary"></i></button>
             <button class="btn btn-sm btn-light rounded-circle" onclick="toggleTheme()" id="themeToggleBtn"><i class="bi bi-moon-fill"></i></button>
           </div>
         </header>
@@ -368,7 +385,6 @@
             </div>
           </div>
 
-          <!-- PERBAIKAN: Menu Scanner dengan Panel Log Hari Ini di Sampingnya -->
           <div id="menu-absen" class="menu-section d-none">
             <div class="row g-3">
               <!-- Kolom Scanner -->
@@ -483,7 +499,6 @@
         </div>
       </main>
 
-      <!-- PERBAIKAN: Penambahan Menu Invoice di Panel Navigasi Bawah -->
       <nav class="bottom-nav d-md-none" id="mobile-bottom-nav">
         <button class="nav-item-bottom active" onclick="switchMenu('menu-dashboard', this); setActiveBottomNav(this);"><i class="bi bi-grid-1x2-fill"></i><span>Home</span></button>
         <button class="nav-item-bottom" onclick="switchMenu('menu-siswa', this); setActiveBottomNav(this);"><i class="bi bi-people-fill"></i><span>Siswa</span></button>
@@ -537,7 +552,7 @@
       let waTemplate = `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Overtime: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice (PDF) otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\nMohon kesediaannya menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
 
       window.onload = async function () {
-        // PERBAIKAN: Set Icon tombol tema sesuai localStorage di awal
+        // Set Icon tombol tema sesuai localStorage di awal
         const savedTheme = localStorage.getItem('theme') || 'light';
         const iconClass = savedTheme === "light" ? "bi bi-moon-fill" : "bi bi-sun-fill";
         document.querySelector("#themeToggleBtn i").className = iconClass;
@@ -566,6 +581,18 @@
         });
       }
 
+      // PERBAIKAN: Tombol Sync Manual
+      async function refreshDataBtn() {
+        document.getElementById('api-loader').classList.remove('d-none');
+        document.getElementById('api-loader').style.opacity = '1';
+        await loadDataFromAPI();
+        refreshAllUI();
+        if(!document.getElementById("pw-detail-view").classList.contains("d-none")) {
+            renderDataWali();
+        }
+        Swal.fire({ toast: true, position: "top-end", icon: "success", title: "Data berhasil diperbarui!", showConfirmButton: false, timer: 1500 });
+      }
+
       async function loadDataFromAPI() {
          if (!GAS_URL) {
              console.log("GAS_URL kosong. Menggunakan data simulasi fallback (Offline Mode).");
@@ -580,7 +607,6 @@
              const json = await res.json();
              
              if(json.status === 'success') {
-                 
                  // --- DATA SANITIZER (MENCEGAH GOOGLE SHEETS AUTO-FORMAT BUGS) ---
                  dataSiswa = (json.data.siswa || []).map(s => {
                     s.pin = String(s.pin);
@@ -1269,6 +1295,7 @@
               <div class="d-flex gap-1 flex-wrap justify-content-end">
                 <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#${idRow}"><i class="bi bi-chevron-down"></i> <span class="d-none d-md-inline">Detail</span></button>
                 <button class="btn btn-sm ${btnLunasClass}" onclick="toggleLunas('${k}', '${bln}')"><i class="bi ${btnLunasIcon}"></i> <span class="d-none d-md-inline">${btnLunasText}</span></button>
+                <button class="btn btn-sm btn-info text-white" onclick="bagikanInvoiceGambar('${k}')"><i class="bi bi-image"></i> <span class="d-none d-md-inline">Struk</span></button>
                 <button class="btn btn-sm btn-primary" onclick="cetakInvoice('${k}')"><i class="bi bi-file-pdf"></i> <span class="d-none d-md-inline">PDF</span></button>
                 <button class="btn btn-sm btn-success" onclick="kirimWA('${k}')"><i class="bi bi-whatsapp"></i> <span class="d-none d-md-inline">WA</span></button>
               </div>
@@ -1298,24 +1325,115 @@
         const index = dataPembayaran.findIndex(p => p.idTagihan === idTagihan);
         
         if (index > -1) {
-            // Batalkan Lunas
             dataPembayaran.splice(index, 1);
             sendToAPI('hapusPembayaran', { idTagihan: idTagihan });
             Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Status diubah ke Belum Lunas', showConfirmButton: false, timer: 2000 });
         } else {
-            // Set Lunas
             const newBayar = { idTagihan: idTagihan, idSiswa: idSiswa, bulan: bln, status: 'Lunas' };
             dataPembayaran.push(newBayar);
             sendToAPI('tambahPembayaran', newBayar);
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tagihan ditandai Lunas!', showConfirmButton: false, timer: 2000 });
         }
         
-        filterLaporan(); // Refresh Laporan Table
-        
-        // Refresh Portal Wali jika sedang terbuka
+        filterLaporan(); 
         if (!document.getElementById("pw-detail-view").classList.contains("d-none")) {
             renderDataWali();
         }
+      }
+
+      // PERBAIKAN: Fitur Bagikan Gambar Struk ke WA (Menggunakan html2canvas)
+      async function bagikanInvoiceGambar(idSiswa) {
+        const bln = document.getElementById("searchLapBulan").value;
+        const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
+        const siswa = dataSiswa.find(s => s.id === idSiswa);
+        if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tagihan tidak ditemukan", "error");
+
+        let totalReg = 0, totalOver = 0;
+        logs.forEach(l => { totalReg += l.reg; totalOver += l.over; });
+        let grandTotal = totalReg + totalOver;
+        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
+        let statusText = isLunas ? "L U N A S" : "BELUM LUNAS";
+        let statusColor = isLunas ? "#10b981" : "#ef4444";
+
+        const receiptTemplate = document.getElementById('receipt-template');
+        receiptTemplate.innerHTML = `
+            <div style="text-align: center; border-bottom: 2px dashed #cbd5e1; padding-bottom: 15px; margin-bottom: 15px;">
+                <h3 style="color: #0084ff; margin: 0; font-weight: 800; font-size: 22px;">BIMBEL BEE</h3>
+                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">Bukti Tagihan Les</p>
+            </div>
+            <table style="width: 100%; font-size: 14px; margin-bottom: 15px; border-collapse: collapse;">
+                <tr><td style="color: #64748b; padding: 4px 0;">Siswa</td><td style="text-align: right; font-weight: bold; color: #1e293b;">${siswa.nama}</td></tr>
+                <tr><td style="color: #64748b; padding: 4px 0;">ID</td><td style="text-align: right; color: #1e293b;">${siswa.id}</td></tr>
+                <tr><td style="color: #64748b; padding: 4px 0;">Periode</td><td style="text-align: right; color: #1e293b;">${bln}</td></tr>
+                <tr><td style="color: #64748b; padding: 4px 0;">Total Sesi</td><td style="text-align: right; color: #1e293b;">${logs.length} Pertemuan</td></tr>
+            </table>
+            <div style="background: #f8fafd; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #64748b; font-size: 14px;">Total Reguler</span>
+                    <span style="font-weight: bold; color: #1e293b;">Rp ${totalReg.toLocaleString("id-ID")}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #64748b; font-size: 14px;">Total Overtime</span>
+                    <span style="font-weight: bold; color: #1e293b;">Rp ${totalOver.toLocaleString("id-ID")}</span>
+                </div>
+            </div>
+            <div style="border-top: 2px dashed #cbd5e1; padding-top: 15px; text-align: center;">
+                <p style="margin: 0; color: #64748b; font-size: 14px;">TOTAL TAGIHAN</p>
+                <h2 style="margin: 5px 0; color: #1e293b; font-weight: 800; font-size: 26px;">Rp ${grandTotal.toLocaleString("id-ID")}</h2>
+                <div style="margin-top: 12px; display: inline-block; padding: 6px 16px; border: 2px solid ${statusColor}; color: ${statusColor}; font-weight: 800; border-radius: 20px; font-size: 14px; letter-spacing: 1px;">
+                    ${statusText}
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #94a3b8; font-size: 12px;">
+                Terima kasih atas kepercayaan Anda! ✨<br>Dicetak otomatis oleh Sistem.
+            </div>
+        `;
+
+        Swal.fire({ title: 'Membuat Gambar Struk...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+
+        // Generate image menggunakan library
+        html2canvas(receiptTemplate, { scale: 2, backgroundColor: null }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], `Invoice_BimbelBee_${siswa.nama.replace(/\s+/g, '_')}_${bln}.png`, { type: 'image/png' });
+                Swal.close(); 
+
+                // Jika HP mendukung native share (Android/iOS)
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: 'Invoice Bimbel Bee',
+                            text: `Berikut adalah bukti tagihan les an. ${siswa.nama} untuk bulan ${bln}.`,
+                            files: [file]
+                        });
+                    } catch (error) {
+                        fallbackDownloadGambar(imgData, file.name);
+                    }
+                } else {
+                    fallbackDownloadGambar(imgData, file.name);
+                }
+            }, 'image/png');
+        });
+      }
+
+      function fallbackDownloadGambar(imgData, filename) {
+        Swal.fire({
+            title: 'Gambar Berhasil Dibuat!',
+            text: 'Karena Anda membukanya di Desktop, gambar akan otomatis diunduh. Silakan kirim file tersebut ke WhatsApp.',
+            imageUrl: imgData,
+            imageWidth: 250,
+            imageAlt: 'Invoice Preview',
+            confirmButtonText: '<i class="bi bi-download"></i> Unduh Gambar',
+            showCancelButton: true,
+            cancelButtonText: 'Tutup'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const a = document.createElement('a');
+                a.href = imgData; a.download = filename;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            }
+        });
       }
 
       function cetakInvoice(idSiswa) {
