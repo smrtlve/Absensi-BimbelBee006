@@ -92,7 +92,7 @@
       /* Table Styles */
       .table-responsive { border-radius: 0 0 12px 12px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } 
       .table { margin-bottom: 0; color: var(--text-main); width: 100%; min-width: 600px; } 
-      .table th { background-color: rgba(0, 0, 0, 0.02); border-bottom-width: 2px; border-color: var(--border-color); font-weight: 600; padding: 0.75rem 1rem; white-space: nowrap; }
+      .table th { background-color: rgba(0, 0, 0, 0.02); border-bottom-width: 2px; border-color: var(--border-color); font-weight: 600; padding: 0.75rem 1rem; }
       .table td { border-color: var(--border-color); padding: 0.75rem 1rem; vertical-align: middle; }
       .editable-cell { cursor: pointer; border-bottom: 1px dashed var(--primary-color); transition: background-color 0.2s; }
       .editable-cell:hover { background-color: rgba(0, 132, 255, 0.1); }
@@ -115,7 +115,7 @@
 
       .bottom-nav { display: none; }
 
-      /* PENYESUAIAN MOBILE PADA LAYAR <= 768px (COMPACT & PROPORSIONAL) */
+      /* PENYESUAIAN MOBILE PADA LAYAR <= 768px (COMPACT & WRAPPING) */
       @media (max-width: 768px) {
         #sidebar { transform: translateX(-100%); z-index: 1060; }
         #sidebar.show { transform: translateX(0); box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); }
@@ -129,9 +129,15 @@
         .mobile-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1055; backdrop-filter: blur(3px); }
         .mobile-overlay.show { display: block; }
         
-        /* Tampilan Mobile Compact: Lebih proporsional dan mudah dibaca */
+        /* Tampilan Mobile: Meniadakan Scroll Horizontal dengan membiarkan konten ke bawah */
         .table { min-width: 100%; } 
-        .table th, .table td { padding: 0.6rem 0.75rem !important; font-size: 0.9rem !important; }
+        .table th, .table td { 
+            padding: 0.6rem 0.5rem !important; 
+            font-size: 0.9rem !important; 
+            white-space: normal !important; /* Kunci Anti-Scroll: Biarkan teks meluncur ke bawah */
+            word-break: break-word; 
+            vertical-align: top;
+        }
         .badge { font-size: 0.75rem !important; padding: 0.4em 0.6em !important; }
         .btn-sm { font-size: 0.85rem !important; padding: 0.35rem 0.6rem !important; }
         .form-control, .form-select { font-size: 0.95rem !important; padding: 0.5rem 0.75rem !important; }
@@ -696,7 +702,7 @@
         lastLogs.forEach(l => {
            const siswa = dataSiswa.find(s => s.id === l.idSiswa);
            const b = l.status === "Hadir" ? "success" : "warning";
-           htmlStr += `<tr><td class="text-nowrap"><div class="fw-bold">${l.nama}</div><small class="text-muted">${siswa ? siswa.jenjang : ''}</small></td><td class="text-end text-nowrap"><span class="badge bg-${b}">${l.status}</span><br /><small class="text-muted">${l.tgl}</small></td></tr>`;
+           htmlStr += `<tr><td><div class="fw-bold">${l.nama}</div><small class="text-muted">${siswa ? siswa.jenjang : ''}</small></td><td class="text-end"><span class="badge bg-${b}">${l.status}</span><br /><small class="text-muted">${l.tgl}</small></td></tr>`;
         });
         if(lastLogs.length === 0) htmlStr = `<tr><td colspan="2" class="text-center text-muted">Belum ada aktivitas di bulan ini.</td></tr>`;
         tbodyAktivitas.innerHTML = htmlStr;
@@ -718,11 +724,11 @@
           let gWali = s.genderWali ? `(${s.genderWali})` : '';
           htmlStr += `<tr>
           <td><input class="form-check-input cb-siswa" type="checkbox" value="${s.id}"></td>
-          <td class="text-nowrap">${s.id}</td>
-          <td class="text-nowrap"><div class="fw-bold">${s.nama} <small class="text-muted fw-normal">${gSiswa}</small></div></td>
-          <td class="text-nowrap"><div>${s.wali} <small class="text-muted fw-normal">${gWali}</small></div><small class="text-muted"><i class="bi bi-telephone"></i> ${s.hp}</small></td>
-          <td class="text-nowrap">${s.jenjang}</td>
-          <td class="text-nowrap">
+          <td>${s.id}</td>
+          <td><div class="fw-bold">${s.nama} <small class="text-muted fw-normal">${gSiswa}</small></div></td>
+          <td><div>${s.wali} <small class="text-muted fw-normal">${gWali}</small></div><small class="text-muted"><i class="bi bi-telephone"></i> ${s.hp}</small></td>
+          <td>${s.jenjang}</td>
+          <td>
             <div class="d-flex gap-1 flex-wrap">
               <button class="btn btn-sm btn-outline-success" onclick="cetakIndividu('${s.id}')" title="Cetak Kartu"><i class="bi bi-printer"></i></button>
               <button class="btn btn-sm btn-outline-primary" onclick="showIDCard('${s.id}')" title="Lihat Kartu"><i class="bi bi-person-vcard"></i></button>
@@ -739,15 +745,15 @@
         const tbody = document.getElementById("body-tabel-tarif");
         let htmlStr = "";
         dataTarif.forEach((t, index) => {
-          const jenjangHtml = `<ul class="mb-0 ps-3 text-muted">` + t.jenjang.split(', ').map(j => `<li class="text-nowrap">${j}</li>`).join('') + `</ul>`;
-          const hariHtml = `<ul class="mb-0 ps-3 text-muted">` + t.hari.split(', ').map(h => `<li class="text-nowrap">${h}</li>`).join('') + `</ul>`;
+          const jenjangHtml = `<ul class="mb-0 ps-3 text-muted">` + t.jenjang.split(', ').map(j => `<li>${j}</li>`).join('') + `</ul>`;
+          const hariHtml = `<ul class="mb-0 ps-3 text-muted">` + t.hari.split(', ').map(h => `<li>${h}</li>`).join('') + `</ul>`;
           htmlStr += `<tr>
-          <td class="fw-bold align-top text-nowrap">${t.nama}</td>
+          <td class="fw-bold align-top">${t.nama}</td>
           <td class="align-top"><small>${jenjangHtml}</small></td>
           <td class="align-top"><small>${hariHtml}</small></td>
-          <td class="align-top text-nowrap">Rp ${t.reg.toLocaleString("id-ID")}</td>
-          <td class="align-top text-nowrap">Rp ${t.over.toLocaleString("id-ID")}</td>
-          <td class="align-top text-nowrap">
+          <td class="align-top">Rp ${t.reg.toLocaleString("id-ID")}</td>
+          <td class="align-top">Rp ${t.over.toLocaleString("id-ID")}</td>
+          <td class="align-top">
             <div class="d-flex gap-1 flex-wrap">
               <button class="btn btn-sm btn-outline-secondary" onclick="editTarif(${index})"><i class="bi bi-pencil"></i></button> 
               <button class="btn btn-sm btn-outline-danger" onclick="hapusData('Tarif', '${t.nama}')"><i class="bi bi-trash"></i></button>
@@ -764,10 +770,10 @@
         dataAdmin.forEach((a) => {
           const badgeClass = a.role === 'SuperAdmin' ? 'dark' : 'secondary';
           htmlStr += `<tr>
-            <td class="fw-bold text-nowrap">${a.username}</td>
-            <td class="text-nowrap">${a.nama}</td>
-            <td class="text-nowrap"><span class="badge bg-${badgeClass}">${a.role}</span></td>
-            <td class="text-nowrap">
+            <td class="fw-bold">${a.username}</td>
+            <td>${a.nama}</td>
+            <td><span class="badge bg-${badgeClass}">${a.role}</span></td>
+            <td>
               <div class="d-flex gap-1 flex-wrap">
                 <button class="btn btn-sm btn-primary" onclick="bukaModalRole('${a.username}', '${a.role}')"><i class="bi bi-gear"></i> <span class="d-none d-md-inline">Privilege</span></button>
                 <button class="btn btn-sm btn-outline-danger" onclick="hapusData('Admin', '${a.username}')" ${a.role==='SuperAdmin' ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
@@ -802,12 +808,12 @@
             let jamSaja = tglPart[3] || '';
 
             htmlStr += `<tr>
-              <td class="text-nowrap"><span class="fw-bold">${l.hari}</span>, ${l.tgl.split(' ')[0]} ${l.tgl.split(' ')[1]}<br><small class="text-muted fw-normal">${l.tgl.split(' ')[2]} ${l.tgl.split(' ')[3]} WIB</small></td>
-              <td class="text-nowrap fw-bold">${l.nama}</td>
-              <td class="text-nowrap"><span class="badge bg-${b}">${l.status}</span></td>
-              <td class="editable-cell text-nowrap" contenteditable="true" onblur="updateLogHarga(this, 'reg', '${l.idLog}')">Rp ${l.reg.toLocaleString("id-ID")}</td>
-              <td class="editable-cell text-nowrap" contenteditable="true" onblur="updateLogHarga(this, 'over', '${l.idLog}')">Rp ${l.over.toLocaleString("id-ID")}</td>
-              <td class="text-nowrap"><button class="btn btn-sm btn-outline-danger" onclick="hapusData('Log', '${l.idLog}')"><i class="bi bi-trash"></i></button></td>
+              <td><span class="fw-bold">${l.hari}</span>, ${l.tgl.split(' ')[0]} ${l.tgl.split(' ')[1]}<br><small class="text-muted fw-normal">${l.tgl.split(' ')[2]} ${l.tgl.split(' ')[3]} WIB</small></td>
+              <td class="fw-bold">${l.nama}</td>
+              <td><span class="badge bg-${b}">${l.status}</span></td>
+              <td class="editable-cell" contenteditable="true" onblur="updateLogHarga(this, 'reg', '${l.idLog}')">Rp ${l.reg.toLocaleString("id-ID")}</td>
+              <td class="editable-cell" contenteditable="true" onblur="updateLogHarga(this, 'over', '${l.idLog}')">Rp ${l.over.toLocaleString("id-ID")}</td>
+              <td><button class="btn btn-sm btn-outline-danger" onclick="hapusData('Log', '${l.idLog}')"><i class="bi bi-trash"></i></button></td>
             </tr>`;
         });
         if(htmlStr === "") htmlStr = `<tr><td colspan="6" class="text-center text-muted">Tidak ada data kehadiran pada bulan ini.</td></tr>`;
@@ -1113,16 +1119,16 @@
             let tglSaja = tglPart.slice(0, 3).join(' ');
             let jamSaja = tglPart[3] || '';
             
-            detailHtml += `<tr><td class="text-nowrap">${d.hari}, ${tglPart[0]} ${tglPart[1]}</td><td class="text-nowrap">${tglPart[3]}</td><td class="${typeClass} text-nowrap">${d.status}</td><td class="text-nowrap">Rp ${(d.status === "Hadir" ? d.reg : d.over).toLocaleString("id-ID")}</td></tr>`;
+            detailHtml += `<tr><td>${d.hari}, ${tglPart[0]} ${tglPart[1]}</td><td>${tglPart[3]}</td><td class="${typeClass}">${d.status}</td><td>Rp ${(d.status === "Hadir" ? d.reg : d.over).toLocaleString("id-ID")}</td></tr>`;
           });
           htmlStr += `
           <tr>
-            <td class="text-nowrap"><div class="fw-bold">${g.nama}</div><small class="text-muted">${k}</small></td>
-            <td class="text-nowrap">Rp ${g.reg.toLocaleString("id-ID")}</td>
-            <td class="text-nowrap">Rp ${g.over.toLocaleString("id-ID")}</td>
-            <td class="text-nowrap fw-bold text-danger">Rp ${tot.toLocaleString("id-ID")}</td>
-            <td class="text-nowrap">${statusBadge}</td>
-            <td class="text-nowrap">
+            <td><div class="fw-bold">${g.nama}</div><small class="text-muted">${k}</small></td>
+            <td>Rp ${g.reg.toLocaleString("id-ID")}</td>
+            <td>Rp ${g.over.toLocaleString("id-ID")}</td>
+            <td class="fw-bold text-danger">Rp ${tot.toLocaleString("id-ID")}</td>
+            <td>${statusBadge}</td>
+            <td>
               <div class="d-flex gap-1 flex-wrap">
                 <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#${idRow}"><i class="bi bi-chevron-down"></i> <span class="d-none d-md-inline">Detail</span></button>
                 <button class="btn btn-sm ${btnLunasClass}" onclick="toggleLunas('${k}', '${bln}')"><i class="bi ${btnLunasIcon}"></i> <span class="d-none d-md-inline">${btnLunasText}</span></button>
@@ -1298,7 +1304,7 @@
             let tglSaja = tglPart.slice(0, 3).join(' ');
             let jamSaja = tglPart[3] || '';
 
-            htmlStr += `<tr><td class="text-nowrap fw-bold">${l.hari}, ${l.tgl.split(' ')[0]} ${l.tgl.split(' ')[1]} ${l.tgl.split(' ')[2]}<br><small class="text-muted fw-normal">${l.tgl.split(' ')[3]} WIB</small></td><td class="text-nowrap"><span class="badge bg-${b}">${l.status}</span></td><td class="text-nowrap">Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
+            htmlStr += `<tr><td class="fw-bold">${l.hari}, ${l.tgl.split(' ')[0]} ${l.tgl.split(' ')[1]} ${l.tgl.split(' ')[2]}<br><small class="text-muted fw-normal">${l.tgl.split(' ')[3]} WIB</small></td><td><span class="badge bg-${b}">${l.status}</span></td><td>Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
         });
         
         if (htmlStr === "") htmlStr = `<tr><td colspan="3" class="text-center text-muted">Belum ada data kehadiran bulan ini.</td></tr>`;
