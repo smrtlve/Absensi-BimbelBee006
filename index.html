@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <!-- Tambahan Library untuk Fitur Share Gambar (Generate Struk) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
@@ -87,38 +86,40 @@
       .stat-card.purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
       .stat-icon { position: absolute; right: -10px; bottom: -15px; font-size: 4.5rem; opacity: 0.15; }
 
+      /* Tombol Atas Seragam (ThemeBar) */
+      .btn-themebar {
+        background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.3s;
+      }
+      .btn-themebar:hover { background-color: rgba(0, 132, 255, 0.1); color: var(--primary-color); border-color: var(--primary-color); }
+      [data-bs-theme="dark"] .btn-themebar { background-color: var(--card-bg); color: var(--text-main); border-color: var(--border-color); }
+      [data-bs-theme="dark"] .btn-themebar:hover { background-color: #334155; }
+
       /* Form Controls - Peningkatan Jarak Padding Ikon agar tidak nabrak teks */
       .form-control, .form-select { background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 0.5rem 0.75rem; }
       .form-control:focus, .form-select:focus { background-color: var(--bg-color); color: var(--text-main); border-color: var(--primary-color); box-shadow: 0 0 0 0.25rem rgba(0, 132, 255, 0.25); }
       .input-icon-wrapper { position: relative; width: 100%; }
       .input-icon-wrapper i { position: absolute; top: 50%; transform: translateY(-50%); left: 0.85rem; color: var(--text-muted); pointer-events: none; z-index: 5; }
-      /* PERBAIKAN: Padding diperbesar agar text "Cari Nama Siswa..." tidak nabrak ikon */
-      .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.6rem !important; }
+      .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.8rem !important; }
       
       input[type="date"], input[type="month"], input[type="time"] { position: relative; color: var(--text-main) !important; }
       input[type="date"]::-webkit-calendar-picker-indicator, input[type="month"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: auto; height: auto; color: transparent; background: transparent; cursor: pointer; }
 
-      /* =========================================================================
-         MODIFIKASI KHUSUS TEMA DARK (SWAL & TABLE)
-         ========================================================================= */
+      /* Modifikasi Khusus Tema Dark (SWAL & Table) */
       [data-bs-theme="dark"] .swal2-popup { background-color: var(--card-bg) !important; color: var(--text-main) !important; }
       [data-bs-theme="dark"] .swal2-title, [data-bs-theme="dark"] .swal2-html-container { color: var(--text-main) !important; }
       [data-bs-theme="dark"] .swal2-input, [data-bs-theme="dark"] .form-control { background-color: var(--bg-color) !important; color: var(--text-main) !important; border-color: var(--border-color) !important; }
       [data-bs-theme="dark"] .swal2-input::placeholder { color: var(--text-muted); }
-      
-      /* PERBAIKAN: Membunuh background table bawaan Bootstrap yang membuat teks "nge-block" di mode dark */
       .table { --bs-table-bg: transparent; --bs-table-striped-bg: transparent; --bs-table-hover-bg: transparent; }
-      .table td, .table th { background-color: transparent !important; }
+      .table td, .table th { background-color: transparent !important; color: var(--text-main) !important; }
 
       /* Table Styles */
       .table-responsive { border-radius: 0 0 12px 12px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } 
-      .table { margin-bottom: 0; color: var(--text-main); width: 100%; min-width: 600px; } 
-      .table th { background-color: rgba(0, 0, 0, 0.02); border-bottom-width: 2px; border-color: var(--border-color); font-weight: 600; padding: 0.75rem 1rem; white-space: nowrap; }
+      .table { margin-bottom: 0; width: 100%; min-width: 600px; } 
+      .table th { border-bottom-width: 2px; border-color: var(--border-color); font-weight: 600; padding: 0.75rem 1rem; }
       .table td { border-color: var(--border-color); padding: 0.75rem 1rem; vertical-align: middle; }
       .editable-cell { cursor: pointer; border-bottom: 1px dashed var(--primary-color); transition: background-color 0.2s; }
       .editable-cell:hover { background-color: rgba(0, 132, 255, 0.1); }
       .editable-cell:focus { outline: 2px solid var(--primary-color); background-color: var(--card-bg); }
-      .table-compact td, .table-compact th { padding: 0.4rem; font-size: 0.85rem; }
 
       .dropdown-menu-checkboxes { max-height: 250px; overflow-y: auto; }
       .dropdown-menu-checkboxes .form-check { margin: 0; padding: 0.4rem 1rem 0.4rem 2rem; cursor: pointer; }
@@ -152,10 +153,12 @@
         .mobile-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1055; backdrop-filter: blur(3px); }
         .mobile-overlay.show { display: block; }
         
+        .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.8rem !important; }
+
         /* TRANSFORMASI TABEL MENJADI MOBILE CARDS */
-        .table-responsive { overflow: visible; } /* Matikan Scroll Horizontal */
+        .table-responsive { overflow: visible; }
         .table-responsive .table { border-collapse: separate; border-spacing: 0 12px; margin-top: -12px; min-width: 100%; border: none; }
-        .table-responsive thead { display: none; } /* Sembunyikan Header Kolom */
+        .table-responsive thead { display: none; }
         
         .table-responsive tbody tr {
             display: block;
@@ -170,13 +173,14 @@
         .table-responsive tbody td {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             border-bottom: 1px solid var(--border-color) !important;
-            padding: 0.5rem 0.5rem !important; /* Proporsional padding */
-            font-size: 0.9rem !important; /* Standar ukuran terbaca */
+            padding: 0.6rem 0.5rem !important;
+            font-size: 0.9rem !important;
             white-space: normal !important;
+            word-break: break-word;
             text-align: right;
-            gap: 0.5rem; /* Gap dipepetkan agar tak terlalu lebar */
+            gap: 0.5rem;
             border-top: none;
             border-left: none;
             border-right: none;
@@ -185,47 +189,33 @@
         .table-responsive tbody td:last-child { border-bottom: none !important; padding-bottom: 0.25rem !important; }
         .table-responsive tbody td:first-child { padding-top: 0.25rem !important; }
         
-        /* Injeksi Label Header Secara Otomatis di Kiri Card */
         .table-responsive tbody td::before {
             content: attr(data-label);
             font-weight: 700;
             color: var(--text-muted);
             text-align: left;
             flex-shrink: 0;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            width: 35%; /* Proporsional Label */
+            width: 35%;
         }
         
-        /* Perataan isi data di kanan */
-        .table-responsive tbody td > div, .table-responsive tbody td > button, .table-responsive tbody td > small {
-            text-align: right;
-        }
-        .table-responsive tbody td .d-flex { justify-content: flex-end; width: 100%; gap: 0.3rem !important; }
+        .table-responsive tbody td > div, .table-responsive tbody td > button, .table-responsive tbody td > small { text-align: right; }
+        .table-responsive tbody td .d-flex { justify-content: flex-end; width: 100%; gap: 0.3rem !important; flex-wrap: wrap; }
 
-        /* PENGECUALIAN 1: Tabel Dashboard & Scanner Log (Sederhana, tidak butuh label attr) */
+        /* Pengecualian Dashboard & Log Scanner (Sederhana) */
         #menu-dashboard .table-responsive .table, #menu-absen .table-responsive .table { border-spacing: 0; margin-top: 0; }
-        #menu-dashboard .table-responsive tbody tr, #menu-absen .table-responsive tbody tr {
-            display: flex; justify-content: space-between; align-items: center; border-radius: 8px; padding: 0.6rem; margin-bottom: 0.5rem; box-shadow: none; border: 1px solid var(--border-color);
-        }
+        #menu-dashboard .table-responsive tbody tr, #menu-absen .table-responsive tbody tr { display: flex; justify-content: space-between; align-items: center; border-radius: 8px; padding: 0.6rem; margin-bottom: 0.5rem; box-shadow: none; border: 1px solid var(--border-color); }
         #menu-dashboard .table-responsive tbody td, #menu-absen .table-responsive tbody td { display: block; border: none !important; padding: 0 !important; text-align: left; width: auto; }
         #menu-dashboard .table-responsive tbody td::before, #menu-absen .table-responsive tbody td::before { display: none; }
         #menu-dashboard .table-responsive tbody td:last-child, #menu-absen .table-responsive tbody td:last-child { text-align: right; }
 
-        /* PENGECUALIAN 2: Detail Rincian Invoice (Perbaikan Collapse Berantakan) */
+        /* Pengecualian Rincian Invoice (Bebas Nested Table) */
         .table-responsive tbody tr.collapse.show { display: block; }
         .table-responsive tbody tr.collapse:not(.show) { display: none !important; }
         .table-responsive tbody tr.collapse { border: none; background: transparent; box-shadow: none; padding: 0; margin: 0; margin-top: -10px; }
-        
-        /* Jangan ubah tabel compact rincian invoice ke bentuk kartu */
-        .table-compact { border-spacing: 0 !important; }
-        .table-compact thead { display: table-header-group !important; }
-        .table-compact tbody tr { display: table-row !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important;}
-        .table-compact tbody td { display: table-cell !important; text-align: left !important; border-bottom: 1px dashed var(--border-color) !important; padding: 0.5rem !important; }
-        .table-compact tbody td::before { display: none !important; }
 
-        /* Spacing & Ukuran Global Mobile */
         .badge { font-size: 0.75rem !important; padding: 0.4em 0.6em !important; }
         .btn-sm { font-size: 0.85rem !important; padding: 0.35rem 0.6rem !important; }
         .form-control, .form-select { font-size: 0.95rem !important; padding: 0.5rem 0.75rem !important; }
@@ -242,7 +232,7 @@
         </div>
     </div>
 
-    <!-- LOADING OVERLAY SAAT FETCH DATA DARI GOOGLE APPS SCRIPT -->
+    <!-- LOADING OVERLAY -->
     <div id="api-loader">
         <div class="loader-spinner"></div>
         <h5 class="fw-bold m-0">Menyinkronkan Database...</h5>
@@ -259,10 +249,9 @@
           <h5 class="m-0 fw-bold">Bimbel<span class="text-primary">Bee</span> <small class="text-muted fw-normal d-none d-sm-inline">| Portal Wali</small></h5>
         </div>
         <div class="d-flex align-items-center gap-2">
-          <!-- PERBAIKAN: Tombol Sync/Refresh Data Manual -->
-          <button class="btn btn-light shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="refreshDataBtn()" title="Refresh Data"><i class="bi bi-arrow-clockwise text-primary"></i></button>
-          <button class="btn btn-light shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="toggleTheme()" id="themeToggleBtnWali"><i class="bi bi-moon-fill text-secondary"></i></button>
-          <button class="btn btn-outline-primary rounded-pill px-3 py-1 fw-bold" onclick="showAdminPortal()"><i class="bi bi-person-lock"></i> <span class="d-none d-sm-inline">Login Admin</span><span class="d-inline d-sm-none">Admin</span></button>
+          <button class="btn btn-sm btn-themebar rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="refreshDataBtn()" title="Refresh Data"><i class="bi bi-arrow-clockwise"></i></button>
+          <button class="btn btn-sm btn-themebar rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="toggleTheme()" id="themeToggleBtnWali"><i class="bi bi-moon-fill"></i></button>
+          <button class="btn btn-outline-primary btn-themebar rounded-pill px-3 py-1 fw-bold" onclick="showAdminPortal()"><i class="bi bi-person-lock"></i> <span class="d-none d-sm-inline">Login Admin</span><span class="d-inline d-sm-none">Admin</span></button>
         </div>
       </div>
 
@@ -282,7 +271,7 @@
       </div>
 
       <div id="pw-detail-view" class="fade-transition fade-out d-none min-vh-100 w-100 pt-5 px-3 pb-5" style="max-width: 900px; margin: 0 auto; padding-top: 70px !important">
-        <button class="btn btn-sm btn-light mb-3" onclick="kembaliKeSearch()"><i class="bi bi-arrow-left"></i> Kembali ke Pencarian</button>
+        <button class="btn btn-sm btn-themebar mb-3" onclick="kembaliKeSearch()"><i class="bi bi-arrow-left"></i> Kembali ke Pencarian</button>
         <div class="row g-3 mb-4">
           <div class="col-md-7">
             <div class="custom-card p-3 h-100 d-flex align-items-center gap-3">
@@ -306,8 +295,8 @@
 
         <div class="custom-card">
           <div class="card-header-custom">Rincian Kehadiran Anak</div>
-          <div class="table-responsive">
-            <table class="table table-hover"><thead><tr><th>Hari, Tanggal & Waktu</th><th>Tipe Kehadiran</th><th>Tarif Kehadiran</th></tr></thead><tbody id="pw-tabel-rincian"></tbody></table>
+          <div class="p-3" id="pw-tabel-rincian">
+            <!-- Render Flex List Here -->
           </div>
         </div>
       </div>
@@ -317,7 +306,7 @@
     <div id="portal-admin" class="d-none">
       <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
       <aside id="sidebar">
-        <div class="sidebar-header"><div class="brand-icon"><i class="bi bi-book-half"></i></div><h5 class="m-0 fw-bold">Bimbel<span class="text-primary">Bee</span></h5><button class="btn btn-sm btn-light d-md-none ms-auto" onclick="toggleSidebar()"><i class="bi bi-x-lg"></i></button></div>
+        <div class="sidebar-header"><div class="brand-icon"><i class="bi bi-book-half"></i></div><h5 class="m-0 fw-bold">Bimbel<span class="text-primary">Bee</span></h5><button class="btn btn-sm btn-themebar d-md-none ms-auto" onclick="toggleSidebar()"><i class="bi bi-x-lg"></i></button></div>
         <div class="nav-menu" id="admin-nav-menu">
           <div class="small text-muted fw-bold mb-2 px-2 text-uppercase" style="font-size:0.75rem;">Menu Utama</div>
           <div class="nav-item" data-access="dashboard"><a href="#" class="nav-link active" onclick="switchMenu('menu-dashboard', this)"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></div>
@@ -339,12 +328,11 @@
 
       <main id="main-content">
         <header class="top-header">
-          <div class="d-flex align-items-center gap-3"><button class="btn btn-sm btn-light d-md-none" onclick="toggleSidebar()"><i class="bi bi-list"></i></button><h5 class="m-0 fw-bold d-none d-sm-block" id="pageTitle">Dashboard</h5></div>
+          <div class="d-flex align-items-center gap-3"><button class="btn btn-sm btn-themebar d-md-none" onclick="toggleSidebar()"><i class="bi bi-list"></i></button><h5 class="m-0 fw-bold d-none d-sm-block" id="pageTitle">Dashboard</h5></div>
           <div class="d-flex align-items-center gap-2">
             <div id="realtime-clock" class="fw-bold text-primary small d-none d-sm-block px-2"></div>
-            <!-- PERBAIKAN: Tombol Sync/Refresh Data Manual -->
-            <button class="btn btn-sm btn-light rounded-circle" onclick="refreshDataBtn()" title="Sinkronkan/Refresh Data Terbaru"><i class="bi bi-arrow-clockwise text-primary"></i></button>
-            <button class="btn btn-sm btn-light rounded-circle" onclick="toggleTheme()" id="themeToggleBtn"><i class="bi bi-moon-fill"></i></button>
+            <button class="btn btn-sm btn-themebar rounded-circle" onclick="refreshDataBtn()" title="Sinkronkan/Refresh Data Terbaru"><i class="bi bi-arrow-clockwise text-primary"></i></button>
+            <button class="btn btn-sm btn-themebar rounded-circle" onclick="toggleTheme()" id="themeToggleBtn"><i class="bi bi-moon-fill"></i></button>
           </div>
         </header>
 
@@ -433,7 +421,6 @@
                   <button class="btn btn-primary btn-sm" onclick="bukaModalSiswa()"><i class="bi bi-person-plus-fill"></i> <span class="d-none d-sm-inline">Tambah</span></button>
                 </div>
               </div>
-              <!-- PERBAIKAN: Ubah array indeks pencarian ke 1, 2, 3, 4 (Nama Callista akan terbaca) -->
               <div class="p-3"><div class="input-icon-wrapper"><i class="bi bi-search"></i><input type="text" id="searchSiswa" class="form-control" list="listSiswaSuggestion" placeholder="Cari berdasarkan Nama atau Jenjang..." oninput="filterTabel('searchSiswa', 'tabelSiswa', [1, 2, 3, 4])" /></div></div>
               <div class="table-responsive"><table class="table table-hover" id="tabelSiswa"><thead><tr><th style="width: 40px"><input class="form-check-input" type="checkbox" onchange="toggleSemuaSiswa(this)" title="Pilih Semua"></th><th>ID</th><th>Nama Siswa</th><th>Wali / HP</th><th>Jenjang</th><th>Aksi</th></tr></thead><tbody id="body-tabel-siswa"></tbody></table></div>
             </div>
@@ -459,8 +446,9 @@
               <div class="card-header-custom">
                 <span>Rekapitulasi & Tagihan</span>
                 <div class="d-flex flex-wrap gap-2">
-                  <button class="btn btn-warning btn-sm" onclick="bukaModalTemplateWA()"><i class="bi bi-chat-left-text"></i> <span class="d-none d-sm-inline">Template WA</span></button>
-                  <button class="btn btn-success btn-sm" onclick="exportExcel('tabelInvoice', 'Laporan')"><i class="bi bi-file-earmark-excel"></i> <span class="d-none d-sm-inline">Export All</span></button>
+                  <button class="btn btn-warning btn-sm" onclick="bukaModalTemplateWA()"><i class="bi bi-chat-left-text"></i> <span class="d-none d-sm-inline">Teks WA</span></button>
+                  <button class="btn btn-info btn-sm text-white" onclick="bukaModalTemplateStruk()"><i class="bi bi-image"></i> <span class="d-none d-sm-inline">Teks Struk</span></button>
+                  <button class="btn btn-success btn-sm" onclick="exportExcel('tabelInvoice', 'Laporan')"><i class="bi bi-file-earmark-excel"></i> <span class="d-none d-sm-inline">Export Excel</span></button>
                 </div>
               </div>
               <div class="p-3 border-bottom" style="background-color: rgba(0, 0, 0, 0.02);">
@@ -525,34 +513,44 @@
 
     <div class="modal fade" id="modalRole" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Hak Akses / Akun</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="roleCheckboxes"><div class="mb-3 input-icon-wrapper"><i class="bi bi-person"></i><input type="text" class="form-control form-control-sm" id="formAdminUser" placeholder="Username" /></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-key"></i><input type="password" class="form-control form-control-sm" id="formAdminPass" placeholder="Password (Kosongi jk tdk ubah)" /></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-person-badge"></i><input type="text" class="form-control form-control-sm" id="formAdminNama" placeholder="Nama Lengkap Admin" /></div><div class="mb-3"><select class="form-select form-select-sm" id="formAdminRole"><option value="Admin Biasa">Admin Biasa</option><option value="SuperAdmin">SuperAdmin</option></select></div><hr /><div id="privilege-area" class="small"><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-dashboard" checked /><label class="form-check-label ms-2" for="cb-dashboard">Dashboard</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-absen" checked /><label class="form-check-label ms-2" for="cb-absen">Absensi</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-siswa" checked /><label class="form-check-label ms-2" for="cb-siswa">Data Siswa</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-tarif" /><label class="form-check-label ms-2" for="cb-tarif">Pengaturan Tarif</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-log" checked /><label class="form-check-label ms-2" for="cb-log">Log Kehadiran</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-laporan" checked /><label class="form-check-label ms-2" for="cb-laporan">Laporan</label></div><div class="form-check form-switch"><input class="form-check-input role-cb" type="checkbox" id="cb-role" /><label class="form-check-label ms-2" for="cb-role">Manajemen Role</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary btn-sm w-100" onclick="simpanAdminKeAPI()">Simpan Pengaturan</button></div></div></div></div>
 
-    <div class="modal fade" id="modalTemplateWA" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-whatsapp text-success"></i> Edit Template Pesan WA</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2"><strong>Gunakan kode berikut (akan diganti otomatis):</strong><br/><code class="user-select-all">[NAMA_WALI]</code>, <code class="user-select-all">[NAMA_SISWA]</code>, <code class="user-select-all">[BULAN]</code>, <code class="user-select-all">[TOTAL_SESI]</code>, <code class="user-select-all">[REGULER]</code>, <code class="user-select-all">[OVERTIME]</code>, <code class="user-select-all">[GRAND_TOTAL]</code>, <code class="user-select-all">[LINK]</code></div><textarea id="waTemplateInput" class="form-control" rows="12" style="font-size: 13px;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-success w-100" onclick="simpanTemplateWA()">Simpan Template</button></div></div></div></div>
+    <div class="modal fade" id="modalTemplateWA" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-whatsapp text-success"></i> Edit Template Pesan WA</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2"><strong>Gunakan kode berikut (akan diganti otomatis):</strong><br/><code class="user-select-all">[NAMA_WALI]</code>, <code class="user-select-all">[NAMA_SISWA]</code>, <code class="user-select-all">[BULAN]</code>, <code class="user-select-all">[TOTAL_SESI]</code>, <code class="user-select-all">[REGULER]</code>, <code class="user-select-all">[OVERTIME]</code>, <code class="user-select-all">[GRAND_TOTAL]</code>, <code class="user-select-all">[LINK]</code></div><textarea id="waTemplateInput" class="form-control" rows="12" style="font-size: 13px;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-success w-100" onclick="simpanTemplateWA()">Simpan Template WA</button></div></div></div></div>
+
+    <!-- PERBAIKAN: Modal Custom Invoice -->
+    <div class="modal fade" id="modalTemplateStruk" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-image text-info"></i> Edit Catatan Struk Tagihan</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2">Catatan ini akan muncul di bagian paling bawah pada gambar Struk Tagihan yang dibagikan.</div><textarea id="strukTemplateInput" class="form-control" rows="4" style="font-size: 13px; text-align:center;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-info text-white w-100" onclick="simpanTemplateStruk()">Simpan Teks Struk</button></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
       const jenjangKelas = ["TK A", "TK B", "SD Kelas 1", "SD Kelas 2", "SD Kelas 3", "SD Kelas 4", "SD Kelas 5", "SD Kelas 6", "SMP Kelas 7", "SMP Kelas 8", "SMP Kelas 9", "SMA Kelas 10", "SMA Kelas 11", "SMA Kelas 12", "Umum"];
 
-      // Variabel In-Memory Database
       let dataSiswa = [];
       let dataTarif = [];
       let dataLog = [];
       let dataAdmin = []; 
-      let dataPembayaran = []; // State Pembayaran Lunas
+      let dataPembayaran = []; 
       
-      // State ID Edit & Scanner
       let editSiswaId = null;
       let editTarifOldNama = null;
       let editAdminOldUser = null;
-      let html5QrcodeScanner = null; // FIXED: Deklarasi Scanner Global agar tidak crash
+      let html5QrcodeScanner = null; 
 
-      // Scanner Cooldown State (Anti Double-Scan)
       let lastScanValue = "";
       let lastScanTime = 0;
 
-      let waTemplate = `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Overtime: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice (PDF) otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\nMohon kesediaannya menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
+      let waTemplate = localStorage.getItem('waTemplate') || `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Overtime: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\nMohon kesediaannya menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
+      
+      let strukTemplateNote = localStorage.getItem('strukTemplateNote') || `Terima kasih atas kepercayaan Anda! ✨\nDicetak otomatis oleh Sistem Bimbel Bee.`;
+
+      // PERBAIKAN: Fungsi konversi angka bulan "YYYY-MM" menjadi Teks "NamaBulan Tahun"
+      function formatBulanIndo(yyyy_mm) {
+          if(!yyyy_mm) return "";
+          const p = yyyy_mm.split('-');
+          if(p.length !== 2) return yyyy_mm;
+          const mNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+          return `${mNames[parseInt(p[1])-1]} ${p[0]}`;
+      }
 
       window.onload = async function () {
-        // Set Icon tombol tema sesuai localStorage di awal
         const savedTheme = localStorage.getItem('theme') || 'light';
         const iconClass = savedTheme === "light" ? "bi bi-moon-fill" : "bi bi-sun-fill";
         document.querySelector("#themeToggleBtn i").className = iconClass;
@@ -564,7 +562,6 @@
         checkAutoLogin();
       };
 
-      // FUNGSI HELPER API (Untuk Error Handling terpusat)
       function sendToAPI(actionName, payloadData) {
         if (!GAS_URL) return;
         fetch(GAS_URL, {
@@ -581,7 +578,6 @@
         });
       }
 
-      // PERBAIKAN: Tombol Sync Manual
       async function refreshDataBtn() {
         document.getElementById('api-loader').classList.remove('d-none');
         document.getElementById('api-loader').style.opacity = '1';
@@ -595,7 +591,6 @@
 
       async function loadDataFromAPI() {
          if (!GAS_URL) {
-             console.log("GAS_URL kosong. Menggunakan data simulasi fallback (Offline Mode).");
              generateMockDataFallback();
              document.getElementById('api-loader').style.opacity = '0';
              setTimeout(() => document.getElementById('api-loader').classList.add('d-none'), 500);
@@ -607,59 +602,19 @@
              const json = await res.json();
              
              if(json.status === 'success') {
-                 // --- DATA SANITIZER (MENCEGAH GOOGLE SHEETS AUTO-FORMAT BUGS) ---
-                 dataSiswa = (json.data.siswa || []).map(s => {
-                    s.pin = String(s.pin);
-                    s.hp = String(s.hp);
-                    return s;
-                 });
-                 
-                 dataTarif = (json.data.tarif || []).map(t => {
-                    t.reg = parseInt(t.reg) || 0;
-                    t.over = parseInt(t.over) || 0;
-                    return t;
-                 });
-                 
+                 dataSiswa = (json.data.siswa || []).map(s => { s.pin = String(s.pin); s.hp = String(s.hp); return s; });
+                 dataTarif = (json.data.tarif || []).map(t => { t.reg = parseInt(t.reg) || 0; t.over = parseInt(t.over) || 0; return t; });
                  dataAdmin = json.data.admin || [];
-                 dataPembayaran = json.data.pembayaran || []; // Tarik status lunas
-                 
+                 dataPembayaran = json.data.pembayaran || []; 
                  dataLog = (json.data.log || []).map(l => {
-                    // Beri ID unik jika terlewat
                     if (!l.idLog) l.idLog = "log-" + Date.now() + Math.random().toString(36).substr(2, 5);
-                    
-                    // Kembalikan tarif sebagai angka agar kalkulasi Dashboard tidak rusak
-                    l.reg = parseInt(l.reg) || 0;
-                    l.over = parseInt(l.over) || 0;
-
-                    // FIX: Jika Google Sheets mengubah string "2026-04" menjadi format Date panjang
-                    if (l.bulan && l.bulan.length > 7) {
-                        try {
-                            const d = new Date(l.bulan);
-                            if (!isNaN(d.getTime())) {
-                                l.bulan = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0');
-                            }
-                        } catch(e){}
-                    }
-
-                    // FIX: Jika Google Sheets mengubah string tanggal jam menjadi format Date panjang
-                    if (l.tgl && l.tgl.length > 20) {
-                        try {
-                            const d = new Date(l.tgl);
-                            if (!isNaN(d.getTime())) {
-                                const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-                                const jam = d.getHours().toString().padStart(2, '0');
-                                const mnt = d.getMinutes().toString().padStart(2, '0');
-                                l.tgl = `${d.getDate().toString().padStart(2, '0')} ${mNames[d.getMonth()]} ${d.getFullYear()} ${jam}:${mnt}`;
-                            }
-                        } catch(e){}
-                    }
+                    l.reg = parseInt(l.reg) || 0; l.over = parseInt(l.over) || 0;
+                    if (l.bulan && l.bulan.length > 7) { try { const d = new Date(l.bulan); if (!isNaN(d.getTime())) l.bulan = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0'); } catch(e){} }
+                    if (l.tgl && l.tgl.length > 20) { try { const d = new Date(l.tgl); if (!isNaN(d.getTime())) { const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"]; l.tgl = `${d.getDate().toString().padStart(2, '0')} ${mNames[d.getMonth()]} ${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; } } catch(e){} }
                     return l;
                  });
-             } else {
-                 throw new Error(json.message);
-             }
+             } else throw new Error(json.message);
          } catch(e) {
-             console.error("Gagal menarik data API:", e);
              Swal.fire("Koneksi Server Gagal", "Gagal menarik data dari Database Google Sheets. Menggunakan data lokal (Simulasi).", "warning");
              generateMockDataFallback();
          } finally {
@@ -668,38 +623,23 @@
          }
       }
 
-      // --- MOCK DATA FALLBACK (DIJALANKAN JIKA GAS_URL KOSONG) ---
       function generateMockDataFallback() {
-        dataAdmin = [
-          { username: "admin_master", password: "123", nama: "Bapak Master", role: "SuperAdmin", privilege: "all" },
-          { username: "kasir", password: "123", nama: "Mbak Kasir", role: "Admin Biasa", privilege: "all" }
-        ];
+        dataAdmin = [{ username: "admin_master", password: "123", nama: "Bapak Master", role: "SuperAdmin", privilege: "all" }];
         dataSiswa = [
-          { id: "S-001", nama: "Budi Santoso", genderSiswa: "L", wali: "Ibu Ana", genderWali: "P", hp: "081234567801", jenjang: "SD Kelas 5", pin: "1234" },
-          { id: "S-002", nama: "Alya Putri", genderSiswa: "P", wali: "Bpk Budi", genderWali: "L", hp: "081299998802", jenjang: "SMP Kelas 8", pin: "1234" }
+          { id: "S-001", nama: "Callista Putri", genderSiswa: "P", wali: "Ibu Ana", genderWali: "P", hp: "081234567801", jenjang: "SD Kelas 5", pin: "1234" },
+          { id: "S-002", nama: "M. Arkanza", genderSiswa: "L", wali: "Bpk Budi", genderWali: "L", hp: "081299998802", jenjang: "SMP Kelas 8", pin: "1234" }
         ];
-        dataTarif = [
-          { nama: "TK All Days", jenjang: "TK A, TK B", hari: "Senin, Selasa, Rabu, Kamis, Jumat, Sabtu", reg: 25000, over: 35000 },
-          { nama: "SD Atas Weekday", jenjang: "SD Kelas 4, SD Kelas 5, SD Kelas 6", hari: "Senin, Rabu, Jumat", reg: 35000, over: 50000 }
-        ];
-        
+        dataTarif = [{ nama: "TK All Days", jenjang: "TK A, TK B", hari: "Senin, Selasa, Rabu, Kamis, Jumat, Sabtu", reg: 25000, over: 35000 }];
         const curDateObj = new Date();
         const curYearMonth = curDateObj.getFullYear() + "-" + String(curDateObj.getMonth() + 1).padStart(2, '0');
         const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
         const curMonthName = mNames[curDateObj.getMonth()];
         const curYearStr = curDateObj.getFullYear();
-        
-        dataLog = [
-            { idLog: "log-1000", idSiswa: "S-001", nama: "Budi Santoso", hari: "Senin", tgl: `05 ${curMonthName} ${curYearStr} 14:00`, status: "Hadir", reg: 35000, over: 0, bulan: curYearMonth, tglObj: new Date() }
-        ];
-        
-        dataPembayaran = [
-            { idTagihan: "S-001-" + curYearMonth, idSiswa: "S-001", bulan: curYearMonth, status: "Lunas" }
-        ];
+        dataLog = [{ idLog: "log-1000", idSiswa: "S-001", nama: "Callista Putri", hari: "Senin", tgl: `05 ${curMonthName} ${curYearStr} 14:00`, status: "Hadir", reg: 35000, over: 0, bulan: curYearMonth, tglObj: new Date() }];
+        dataPembayaran = [{ idTagihan: "S-001-" + curYearMonth, idSiswa: "S-001", bulan: curYearMonth, status: "Lunas" }];
       }
 
       function initUIComponents() {
-        // Ambil bulan sekarang yang aman dari issue Timezone
         const dDate = new Date();
         const curMonth = dDate.getFullYear() + "-" + String(dDate.getMonth() + 1).padStart(2, '0');
         
@@ -730,35 +670,22 @@
         filterLog();
         filterLaporan();
         updateDashboardStats();
-        renderScannerLogs(); // Trigger log scanner real-time
+        renderScannerLogs(); 
       }
 
-      // PERBAIKAN: Menampilkan log scan langsung di menu absensi untuk hapus dobel absen
       function renderScannerLogs() {
         const tbody = document.getElementById("scanner-log-body");
         if(!tbody) return;
-        
-        // Urutkan data berdasarkan ID Log (yang mengandung Timestamp otomatis) secara Desending (Terbaru di atas)
-        const recentLogs = [...dataLog].sort((a, b) => b.idLog.localeCompare(a.idLog)).slice(0, 10); // Ambil 10 scan terakhir
-        
+        const recentLogs = [...dataLog].sort((a, b) => b.idLog.localeCompare(a.idLog)).slice(0, 10); 
         let html = "";
         recentLogs.forEach(l => {
             let b = l.status === "Hadir" ? "success" : "warning";
-            // Extraksi jam
             let jamSaja = l.tgl.split(' ')[3] || '';
-            
             html += `<tr>
-                <td class="align-middle">
-                    <div class="fw-bold">${l.nama}</div>
-                    <small class="text-muted"><i class="bi bi-clock"></i> ${jamSaja} WIB</small>
-                </td>
-                <td class="text-end align-middle">
-                    <span class="badge bg-${b} mb-1">${l.status}</span><br>
-                    <button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.7rem;" onclick="hapusData('Log', '${l.idLog}')">Batal/Hapus</button>
-                </td>
+                <td class="align-middle"><div class="fw-bold">${l.nama}</div><small class="text-muted"><i class="bi bi-clock"></i> ${jamSaja} WIB</small></td>
+                <td class="text-end align-middle"><span class="badge bg-${b} mb-1">${l.status}</span><br><button class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: 0.7rem;" onclick="hapusData('Log', '${l.idLog}')">Batal/Hapus</button></td>
             </tr>`;
         });
-        
         if(html === "") html = `<tr><td colspan="2" class="text-center text-muted py-4">Belum ada scan hari ini.</td></tr>`;
         tbody.innerHTML = html;
       }
@@ -767,85 +694,44 @@
         const urlParams = new URLSearchParams(window.location.search);
         const autoId = urlParams.get('id');
         const autoBln = urlParams.get('bln');
-        
         document.getElementById("portal-wali").classList.remove("d-none");
 
         if (autoId) {
             if(autoBln) document.getElementById("pw-filter-bulan").value = autoBln;
             const siswaAuto = dataSiswa.find(s => s.id === autoId);
-            
             if (siswaAuto) {
-                // FIXED: Celah keamanan ditutup. Tetap wajib memasukkan PIN meski via link WA!
                 const { value: pin } = await Swal.fire({ 
-                  title: "Masukkan PIN Keamanan", 
-                  input: "password", 
-                  inputLabel: `Verifikasi PIN Anak Anda (${siswaAuto.nama})`, 
-                  inputPlaceholder: "Masukkan PIN", 
-                  inputAttributes: { maxlength: 4, autocapitalize: "off", autocorrect: "off" }, 
-                  showCancelButton: true,
-                  didOpen: () => {
-                    const inputSwal = Swal.getInput();
-                    if(inputSwal) {
-                      inputSwal.addEventListener('keydown', (e) => { 
-                        if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
-                      });
-                    }
-                  }
+                  title: "Masukkan PIN Keamanan", input: "password", inputLabel: `Verifikasi PIN Anak Anda (${siswaAuto.nama})`, inputPlaceholder: "Masukkan PIN", inputAttributes: { maxlength: 4, autocapitalize: "off", autocorrect: "off" }, showCancelButton: true,
+                  didOpen: () => { const inputSwal = Swal.getInput(); if(inputSwal) { inputSwal.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } }); } }
                 });
-                
                 if (!pin) return; 
                 if (pin !== siswaAuto.pin) return Swal.fire("Akses Ditolak", "PIN yang Anda masukkan salah!", "error");
 
-                document.getElementById("pw-nama").innerText = siswaAuto.nama;
-                document.getElementById("pw-id").innerText = siswaAuto.id;
-                document.getElementById("pw-jenjang").innerText = siswaAuto.jenjang;
+                document.getElementById("pw-nama").innerText = siswaAuto.nama; document.getElementById("pw-id").innerText = siswaAuto.id; document.getElementById("pw-jenjang").innerText = siswaAuto.jenjang;
                 document.getElementById("pw-qr").src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${siswaAuto.id}`;
                 document.getElementById("pw-search-view").classList.add("d-none");
                 
                 const detailView = document.getElementById("pw-detail-view");
-                detailView.classList.remove("d-none");
-                detailView.classList.remove("fade-out");
-                
+                detailView.classList.remove("d-none"); detailView.classList.remove("fade-out");
                 renderDataWali(); 
                 Swal.fire({ toast: true, position: "top-end", icon: "success", title: `Selamat datang, Bpk/Ibu ${siswaAuto.wali}!`, showConfirmButton: false, timer: 3000 });
             }
         }
       }
 
-      // === FUNGSI PUSAT DELETE DATA ===
       function hapusData(modul, id1, id2 = null) {
         Swal.fire({ title: "Hapus Data?", text: "Data ini akan dihapus dari Database Google Sheets secara permanen!", icon: "warning", showCancelButton: true, confirmButtonColor: "#ef4444", confirmButtonText: "Ya, Hapus!" }).then((result) => { 
           if (result.isConfirmed) { 
-            let actionName = '';
-            let payloadData = {};
-            
-            if (modul === 'Siswa') {
-                dataSiswa = dataSiswa.filter(s => s.id !== id1);
-                actionName = 'hapusSiswa';
-                payloadData = { id: id1 };
-            } else if (modul === 'Tarif') {
-                dataTarif = dataTarif.filter(t => t.nama !== id1);
-                actionName = 'hapusTarif';
-                payloadData = { nama: id1 };
-            } else if (modul === 'Admin') {
-                dataAdmin = dataAdmin.filter(a => a.username !== id1);
-                actionName = 'hapusAdmin';
-                payloadData = { username: id1 };
-            } else if (modul === 'Log') {
-                // FIXED: Penghapusan log kini menggunakan ID Log (Primary Key) yang unik
-                dataLog = dataLog.filter(l => l.idLog !== id1);
-                actionName = 'hapusLog';
-                payloadData = { idLog: id1 };
-            }
-
-            refreshAllUI();
-            Swal.fire("Terhapus!", `Data ${modul} berhasil dihapus dari database.`, "success"); 
-            sendToAPI(actionName, payloadData); // API Request dengan Error Handler
+            let actionName = ''; let payloadData = {};
+            if (modul === 'Siswa') { dataSiswa = dataSiswa.filter(s => s.id !== id1); actionName = 'hapusSiswa'; payloadData = { id: id1 }; } 
+            else if (modul === 'Tarif') { dataTarif = dataTarif.filter(t => t.nama !== id1); actionName = 'hapusTarif'; payloadData = { nama: id1 }; } 
+            else if (modul === 'Admin') { dataAdmin = dataAdmin.filter(a => a.username !== id1); actionName = 'hapusAdmin'; payloadData = { username: id1 }; } 
+            else if (modul === 'Log') { dataLog = dataLog.filter(l => l.idLog !== id1); actionName = 'hapusLog'; payloadData = { idLog: id1 }; }
+            refreshAllUI(); Swal.fire("Terhapus!", `Data ${modul} berhasil dihapus dari database.`, "success"); sendToAPI(actionName, payloadData);
           } 
         });
       }
 
-      // --- DYNAMIC DASHBOARD STATS ---
       function updateDashboardStats() {
         const bln = document.getElementById("dashBulan").value;
         const filteredLogs = dataLog.filter(l => l.bulan === bln);
@@ -857,7 +743,6 @@
         document.getElementById("stat-pemasukan").innerText = "Rp " + (estPemasukan / 1000).toLocaleString('id-ID') + "K";
 
         const tbodyAktivitas = document.getElementById("body-aktivitas-terakhir");
-        // PERBAIKAN: Mengurutkan berdasar ID Log Terakhir agar update berjalan sempurna
         const lastLogs = [...filteredLogs].sort((a,b) => b.idLog.localeCompare(a.idLog)).slice(0, 3);
         let htmlStr = "";
         lastLogs.forEach(l => {
@@ -876,7 +761,6 @@
         dlist.innerHTML = htmlStr;
       }
 
-      // --- RENDER TABLES (DOM OPTIMIZATION) ---
       function renderTabelSiswa() {
         const tbody = document.getElementById("body-tabel-siswa");
         let htmlStr = "";
@@ -906,12 +790,12 @@
         const tbody = document.getElementById("body-tabel-tarif");
         let htmlStr = "";
         dataTarif.forEach((t, index) => {
-          const jenjangHtml = `<ul class="mb-0 ps-3 text-muted" style="list-style-type: none; padding-left: 0 !important; margin: 0; text-align: right;">` + t.jenjang.split(', ').map(j => `<li>${j}</li>`).join('') + `</ul>`;
-          const hariHtml = `<ul class="mb-0 ps-3 text-muted" style="list-style-type: none; padding-left: 0 !important; margin: 0; text-align: right;">` + t.hari.split(', ').map(h => `<li>${h}</li>`).join('') + `</ul>`;
+          const jenjangHtml = t.jenjang.split(', ').map(j => `<span class="badge bg-secondary me-1 mb-1 fw-normal">${j}</span>`).join('');
+          const hariHtml = t.hari.split(', ').map(h => `<span class="badge bg-light text-dark border me-1 mb-1 fw-normal">${h}</span>`).join('');
           htmlStr += `<tr>
           <td data-label="Nama Grup" class="fw-bold text-primary">${t.nama}</td>
-          <td data-label="Jenjang Berlaku"><small>${jenjangHtml}</small></td>
-          <td data-label="Hari Berlaku"><small>${hariHtml}</small></td>
+          <td data-label="Jenjang Berlaku">${jenjangHtml}</td>
+          <td data-label="Hari Berlaku">${hariHtml}</td>
           <td data-label="Tarif Reguler">Rp ${t.reg.toLocaleString("id-ID")}</td>
           <td data-label="Tarif Overtime">Rp ${t.over.toLocaleString("id-ID")}</td>
           <td data-label="Aksi">
@@ -949,15 +833,13 @@
         const input = document.getElementById(inputId).value.toLowerCase();
         const rows = document.querySelectorAll(`#${tableId} tbody > tr`);
         rows.forEach(row => {
-          // Abaikan TR detail di laporan
           if (row.classList.contains("collapse")) return; 
           let text = "";
-          colIndices.forEach(idx => { if(row.cells[idx]) text += row.cells[idx].innerText.toLowerCase() + " "; });
+          colIndices.forEach(idx => { if(row.cells[idx]) text += row.cells[idx].textContent.toLowerCase() + " "; });
           row.style.display = text.includes(input) ? "" : "none";
         });
       }
 
-      // --- LOG KEHADIRAN & FORMAT ---
       function filterLog() {
         const srcName = document.getElementById("searchLogName").value.toLowerCase();
         const bln = document.getElementById("searchLogBulan").value;
@@ -967,7 +849,7 @@
         dataLog.filter((l) => l.nama.toLowerCase().includes(srcName) && l.bulan === bln).forEach((l) => {
             let b = l.status === "Hadir" ? "success" : "warning";
             let tglPart = l.tgl.split(' ');
-            let tglSaja = tglPart.slice(0, 3).join(' '); // Lebih aman dari split statis sebelumnya
+            let tglSaja = tglPart.slice(0, 3).join(' '); 
             let jamSaja = tglPart[3] || '';
 
             htmlStr += `<tr>
@@ -976,7 +858,9 @@
               <td data-label="Status"><span class="badge bg-${b}">${l.status}</span></td>
               <td data-label="Trf Reguler" class="editable-cell text-primary" contenteditable="true" onblur="updateLogHarga(this, 'reg', '${l.idLog}')">Rp ${l.reg.toLocaleString("id-ID")}</td>
               <td data-label="Trf Overtime" class="editable-cell text-primary" contenteditable="true" onblur="updateLogHarga(this, 'over', '${l.idLog}')">Rp ${l.over.toLocaleString("id-ID")}</td>
-              <td data-label="Aksi"><button class="btn btn-sm btn-outline-danger" onclick="hapusData('Log', '${l.idLog}')"><i class="bi bi-trash"></i></button></td>
+              <td data-label="Aksi">
+                 <div class="d-flex justify-content-end"><button class="btn btn-sm btn-outline-danger" onclick="hapusData('Log', '${l.idLog}')"><i class="bi bi-trash"></i></button></div>
+              </td>
             </tr>`;
         });
         if(htmlStr === "") htmlStr = `<tr><td colspan="6" class="text-center text-muted">Tidak ada data kehadiran pada bulan ini.</td></tr>`;
@@ -993,35 +877,26 @@
         if(logIndex > -1) {
             if(type === 'reg') dataLog[logIndex].reg = parsedVal;
             else dataLog[logIndex].over = parsedVal;
-            
             sendToAPI('editLog', dataLog[logIndex]);
         }
         Swal.fire({ toast: true, position: "top-end", icon: "success", title: "Nominal diperbarui di Database!", showConfirmButton: false, timer: 1500 });
       }
 
-      // === FUNGSI PUSAT PENCATATAN ABSENSI (SCAN & MANUAL) ===
+      // === PENCATATAN ABSENSI (SCAN & MANUAL) ===
       async function catatKehadiran(identifier, method, tipeManual = null) {
         let siswa = null;
-        if(method === 'Scanner') {
-            siswa = dataSiswa.find(s => s.id === identifier);
-        } else {
-            siswa = dataSiswa.find(s => s.nama.toLowerCase() === identifier.toLowerCase());
-        }
+        if(method === 'Scanner') siswa = dataSiswa.find(s => s.id === identifier);
+        else siswa = dataSiswa.find(s => s.nama.toLowerCase() === identifier.toLowerCase());
 
         if(!siswa) return Swal.fire("Oops", "Data siswa tidak ditemukan di database!", "error");
 
         const curDateObj = new Date();
-        // Memakai Timezone Lokal secara eksplisit
         const curYearMonth = curDateObj.getFullYear() + "-" + String(curDateObj.getMonth() + 1).padStart(2, '0'); 
-        
-        // Array bulan yang tidak akan berubah meski browser bahasa inggris/indonesia
         const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
         const curMonthName = mNames[curDateObj.getMonth()];
         const curYearStr = curDateObj.getFullYear();
-        
         const hariHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
         const hariName = hariHari[curDateObj.getDay()];
-        
         let jam = curDateObj.getHours().toString().padStart(2, '0');
         let mnt = curDateObj.getMinutes().toString().padStart(2, '0');
         const tglStr = `${curDateObj.getDate().toString().padStart(2, '0')} ${curMonthName} ${curYearStr} ${jam}:${mnt}`;
@@ -1035,7 +910,7 @@
         if(tipeManual === 'Overtime') status = "Overtime";
 
         const newLog = {
-            idLog: "log-" + Date.now().toString(), // FIXED: Penambahan unik primary key
+            idLog: "log-" + Date.now().toString(), 
             idSiswa: siswa.id, nama: siswa.nama, hari: hariName, tgl: tglStr,
             status: status, reg: status === "Hadir" ? tarifReg : 0, over: status === "Overtime" ? tarifOver : 0,
             bulan: curYearMonth, tglObj: curDateObj
@@ -1043,7 +918,7 @@
 
         dataLog.push(newLog);
         dataLog.sort((a, b) => b.tglObj - a.tglObj);
-        refreshAllUI(); // Akan merefresh UI Scanner Log juga
+        refreshAllUI(); 
 
         Swal.fire({ icon: "success", title: "Berhasil Absen!", text: `Kehadiran ${siswa.nama} berhasil dicatat ke Database.`, timer: 2000, showConfirmButton: false });
         sendToAPI('tambahLog', newLog);
@@ -1053,26 +928,12 @@
         document.getElementById("btnMulaiKamera").style.display = "none";
         if (!html5QrcodeScanner) {
           html5QrcodeScanner = new Html5QrcodeScanner(
-             "reader", 
-             { 
-                 fps: 30, // Ditingkatkan dari 10 ke 30 agar baca QR jadi secepat kilat
-                 qrbox: { width: 250, height: 250 },
-                 disableFlip: false
-             }, 
-             false
+             "reader", { fps: 30, qrbox: { width: 250, height: 250 }, disableFlip: false }, false
           );
           html5QrcodeScanner.render((decodedText) => { 
               const currentTime = Date.now();
-              
-              // Jeda/Cooldown 3 detik untuk QR yang sama agar tidak spam absen dobel
-              if (decodedText === lastScanValue && (currentTime - lastScanTime) < 3000) {
-                  return; 
-              }
-              
-              lastScanValue = decodedText;
-              lastScanTime = currentTime;
-              
-              // HAPUS PEMANGGILAN stopScanner() di sini agar kamera tidak mati!
+              if (decodedText === lastScanValue && (currentTime - lastScanTime) < 3000) return; 
+              lastScanValue = decodedText; lastScanTime = currentTime;
               catatKehadiran(decodedText, 'Scanner');
             }, () => {} 
           );
@@ -1130,9 +991,7 @@
             dataAdmin.push(newAdmin); 
             sendToAPI('tambahAdmin', newAdmin);
          }
-         
-         refreshAllUI();
-         simpanLaluTutup('modalRole', 'Data Akun Admin');
+         refreshAllUI(); simpanLaluTutup('modalRole', 'Data Akun Admin');
       }
 
       // --- SISWA CRUD ---
@@ -1188,8 +1047,7 @@
             dataSiswa.push(newSiswa); 
             sendToAPI('tambahSiswa', newSiswa);
          }
-         refreshAllUI(); 
-         simpanLaluTutup('modalSiswa', 'Data Siswa Terkirim ke DB');
+         refreshAllUI(); simpanLaluTutup('modalSiswa', 'Data Siswa Terkirim ke DB');
       }
 
       // --- TARIF CRUD ---
@@ -1276,14 +1134,26 @@
           let btnLunasIcon = isLunas ? 'bi-x-circle' : 'bi-check-circle';
           let btnLunasText = isLunas ? 'Batal Lunas' : 'Set Lunas';
 
+          // PERBAIKAN: List Detail Tanpa Nested Table agar di Mobile Rapi
           g.details.forEach((d) => {
-            let typeClass = d.status === "Hadir" ? "" : "text-warning fw-bold";
+            let typeClass = d.status === "Hadir" ? "text-success" : "text-warning fw-bold";
             let tglPart = d.tgl.split(' ');
-            let tglSaja = tglPart.slice(0, 3).join(' ');
+            let tglSaja = `${tglPart[0]} ${tglPart[1]}`;
             let jamSaja = tglPart[3] || '';
             
-            detailHtml += `<tr><td>${d.hari}, ${tglPart[0]} ${tglPart[1]}</td><td>${tglPart[3]}</td><td class="${typeClass}">${d.status}</td><td>Rp ${(d.status === "Hadir" ? d.reg : d.over).toLocaleString("id-ID")}</td></tr>`;
+            detailHtml += `
+            <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle py-2">
+                <div class="text-start">
+                    <div class="fw-bold" style="font-size:0.85rem;">${d.hari}, ${tglSaja}</div>
+                    <small class="text-muted">${jamSaja} WIB</small>
+                </div>
+                <div class="text-end">
+                    <div class="${typeClass}" style="font-size:0.8rem;"><i class="bi bi-circle-fill small"></i> ${d.status}</div>
+                    <div class="fw-bold text-primary" style="font-size:0.85rem;">Rp ${(d.status === "Hadir" ? d.reg : d.over).toLocaleString("id-ID")}</div>
+                </div>
+            </div>`;
           });
+          
           htmlStr += `
           <tr>
             <td data-label="Nama Siswa"><div class="fw-bold text-primary">${g.nama}</div><small class="text-muted">${k}</small></td>
@@ -1295,22 +1165,19 @@
               <div class="d-flex gap-1 flex-wrap justify-content-end">
                 <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#${idRow}"><i class="bi bi-chevron-down"></i> <span class="d-none d-md-inline">Detail</span></button>
                 <button class="btn btn-sm ${btnLunasClass}" onclick="toggleLunas('${k}', '${bln}')"><i class="bi ${btnLunasIcon}"></i> <span class="d-none d-md-inline">${btnLunasText}</span></button>
-                <button class="btn btn-sm btn-info text-white" onclick="bagikanInvoiceGambar('${k}')"><i class="bi bi-image"></i> <span class="d-none d-md-inline">Struk</span></button>
-                <button class="btn btn-sm btn-primary" onclick="cetakInvoice('${k}')"><i class="bi bi-file-pdf"></i> <span class="d-none d-md-inline">PDF</span></button>
-                <button class="btn btn-sm btn-success" onclick="kirimWA('${k}')"><i class="bi bi-whatsapp"></i> <span class="d-none d-md-inline">WA</span></button>
+                <button class="btn btn-sm btn-primary" onclick="kirimTagihanLengkap('${k}')" title="Kirim Gambar Struk ke WA"><i class="bi bi-share"></i> <span class="d-none d-md-inline">Share Struk</span></button>
+                <button class="btn btn-sm btn-success" onclick="kirimWA('${k}')" title="Hanya Copy Teks WA"><i class="bi bi-whatsapp"></i> <span class="d-none d-md-inline">WA</span></button>
               </div>
             </td>
           </tr>
           <tr id="${idRow}" class="collapse bg-transparent">
             <td colspan="6" class="p-0 border-0">
-              <div class="card card-body border-0 p-2 shadow-sm rounded-3 mt-2" style="background-color: var(--bg-color);">
-                <small class="fw-bold mb-2 text-primary"><i class="bi bi-list-check"></i> Rincian Sesi Kehadiran</small>
-                <div class="table-responsive">
-                  <table class="table table-compact table-sm table-borderless mb-0 bg-transparent w-100">
-                    <thead class="border-bottom border-secondary-subtle"><tr><th>Tanggal</th><th>Jam</th><th>Tipe</th><th>Tarif</th></tr></thead>
-                    <tbody>${detailHtml}</tbody>
-                  </table>
+              <div class="card card-body border-0 p-3 shadow-sm rounded-3 mt-2" style="background-color: var(--bg-color);">
+                <small class="fw-bold mb-2 text-primary border-bottom pb-2"><i class="bi bi-list-check"></i> Rincian Sesi Kehadiran</small>
+                <div class="rincian-list">
+                    ${detailHtml}
                 </div>
+                <div class="text-end mt-2"><button class="btn btn-sm btn-outline-primary" onclick="cetakInvoice('${k}')"><i class="bi bi-file-pdf"></i> Download PDF Invoice</button></div>
               </div>
             </td>
           </tr>`;
@@ -1319,7 +1186,6 @@
         tbody.innerHTML = htmlStr;
       }
 
-      // FITUR TOGGLE LUNAS
       function toggleLunas(idSiswa, bln) {
         const idTagihan = idSiswa + "-" + bln;
         const index = dataPembayaran.findIndex(p => p.idTagihan === idTagihan);
@@ -1334,16 +1200,44 @@
             sendToAPI('tambahPembayaran', newBayar);
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tagihan ditandai Lunas!', showConfirmButton: false, timer: 2000 });
         }
-        
         filterLaporan(); 
-        if (!document.getElementById("pw-detail-view").classList.contains("d-none")) {
-            renderDataWali();
-        }
+        if (!document.getElementById("pw-detail-view").classList.contains("d-none")) renderDataWali();
       }
 
-      // PERBAIKAN: Fitur Bagikan Gambar Struk ke WA (Menggunakan html2canvas)
-      async function bagikanInvoiceGambar(idSiswa) {
+      function cetakInvoice(idSiswa) {
         const bln = document.getElementById("searchLapBulan").value;
+        const namaBulan = formatBulanIndo(bln); // PERBAIKAN: Format Nama Bulan
+        const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
+        const siswa = dataSiswa.find(s => s.id === idSiswa);
+        if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tagihan tidak ditemukan", "error");
+
+        let totalReg = 0, totalOver = 0, detailHtml = '';
+        logs.forEach(l => {
+          totalReg += l.reg; totalOver += l.over;
+          let tar = l.status === "Hadir" ? l.reg : l.over;
+          let tglParts = l.tgl.split(' '); 
+          let tglSaja = tglParts.slice(0, 3).join(' '); 
+          let jamSaja = tglParts[3] || '';
+          detailHtml += `<tr><td><div style="font-weight: 600;">${l.hari}, ${tglSaja}</div><div style="color: #64748b; font-size: 9px; margin-top: 2px;">Pukul ${jamSaja} WIB</div></td><td>${l.status}</td><td class="text-right">Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
+        });
+        let grandTotal = totalReg + totalOver;
+        let tglCetak = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        
+        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
+        let statusTagihanHtml = isLunas 
+            ? `<div style="margin-top: 10px; color: #10b981; font-weight: bold; font-size: 16px; border: 2px solid #10b981; padding: 5px; text-align: center; border-radius: 5px;">LUNAS</div>` 
+            : `<div style="margin-top: 10px; color: #ef4444; font-weight: bold; font-size: 16px; border: 2px solid #ef4444; padding: 5px; text-align: center; border-radius: 5px;">BELUM LUNAS</div>`;
+
+        const strukNoteHtml = strukTemplateNote.replace(/\n/g, '<br>');
+
+        const invoiceHTML = `<html><head><title>Invoice - ${siswa.nama}</title><style>@page { size: A5 portrait; margin: 15mm; } body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #333; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .invoice-box { max-width: 100%; margin: auto; } .header-table { width: 100%; margin-bottom: 20px; border-bottom: 2px solid #0084ff; padding-bottom: 10px; } .header-table td { vertical-align: top; } .title { font-size: 20px; font-weight: bold; color: #0084ff; letter-spacing: 1px; } .subtitle { font-size: 10px; color: #64748b; } .info-table { width: 100%; margin-bottom: 20px; font-size: 11px; } .info-table td { padding: 3px 0; vertical-align: top; } .info-table td:nth-child(1) { width: 80px; font-weight: bold; color: #555; } .info-table td:nth-child(2) { width: 15px; text-align: center; } .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; } .data-table th, .data-table td { padding: 6px 8px; border-bottom: 1px solid #eee; } .data-table th { background: #f8fafd; font-weight: bold; text-align: left; color: #444; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; } .text-right { text-align: right; } .total-section { float: right; width: 220px; font-size: 11px; } .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; } .grand-total { font-weight: bold; font-size: 14px; color: #ef4444; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; } .footer { text-align: center; margin-top: 50px; clear: both; font-size: 9px; color: #888; border-top: 1px solid #eee; padding-top: 10px;}</style></head><body onload="setTimeout(() => { window.print(); window.close(); }, 500)"><div class="invoice-box"><table class="header-table"><tr><td><div class="title">INVOICE TAGIHAN</div><div class="subtitle">Bimbel Bee</div></td><td class="text-right" style="font-size: 10px;"><strong>Periode:</strong> ${namaBulan}<br><strong>Tanggal Cetak:</strong> ${tglCetak}</td></tr></table><table style="width: 100%; margin-bottom: 15px;"><tr><td style="width: 55%; vertical-align: top;"><table class="info-table"><tr><td>Nama Siswa</td><td>:</td><td>${siswa.nama}</td></tr><tr><td>ID Siswa</td><td>:</td><td>${siswa.id}</td></tr><tr><td>Jenjang</td><td>:</td><td>${siswa.jenjang}</td></tr></table></td><td style="width: 45%; vertical-align: top;"><table class="info-table"><tr><td>Nama Wali</td><td>:</td><td>${siswa.wali}</td></tr><tr><td>No. HP (WA)</td><td>:</td><td>${siswa.hp}</td></tr></table></td></tr></table><table class="data-table"><thead><tr><th>Hari, Tanggal & Waktu</th><th>Tipe Kehadiran</th><th class="text-right">Tarif Kehadiran</th></tr></thead><tbody>${detailHtml}</tbody></table><div class="total-section"><div class="total-row"><span>Total Reguler</span><span>Rp ${totalReg.toLocaleString("id-ID")}</span></div><div class="total-row"><span>Total Overtime</span><span>Rp ${totalOver.toLocaleString("id-ID")}</span></div><div class="grand-total"><span>TOTAL TAGIHAN</span><span>Rp ${grandTotal.toLocaleString("id-ID")}</span></div>${statusTagihanHtml}</div><div class="footer">${strukNoteHtml}</div></div></body></html>`;
+        const printWin = window.open("", "_blank"); printWin.document.write(invoiceHTML); printWin.document.close();
+      }
+
+      // PERBAIKAN: Fungsi Kirim WA Gambar + Text Native (Share API)
+      async function kirimTagihanLengkap(idSiswa) {
+        const bln = document.getElementById("searchLapBulan").value;
+        const namaBulan = formatBulanIndo(bln);
         const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
         const siswa = dataSiswa.find(s => s.id === idSiswa);
         if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tagihan tidak ditemukan", "error");
@@ -1355,6 +1249,19 @@
         let statusText = isLunas ? "L U N A S" : "BELUM LUNAS";
         let statusColor = isLunas ? "#10b981" : "#ef4444";
 
+        const baseUrl = window.location.origin + window.location.pathname; 
+        const simulatedWebLink = `${baseUrl}?id=${siswa.id}&bln=${bln}`;
+
+        let textWA = waTemplate
+            .replace(/\[NAMA_WALI\]/g, siswa.wali).replace(/\[NAMA_SISWA\]/g, siswa.nama)
+            .replace(/\[BULAN\]/g, namaBulan).replace(/\[TOTAL_SESI\]/g, logs.length) // Pake namaBulan
+            .replace(/\[REGULER\]/g, totalReg.toLocaleString("id-ID"))
+            .replace(/\[OVERTIME\]/g, totalOver.toLocaleString("id-ID"))
+            .replace(/\[GRAND_TOTAL\]/g, grandTotal.toLocaleString("id-ID"))
+            .replace(/\[LINK\]/g, simulatedWebLink);
+
+        const strukNoteHtml = strukTemplateNote.replace(/\n/g, '<br>');
+
         const receiptTemplate = document.getElementById('receipt-template');
         receiptTemplate.innerHTML = `
             <div style="text-align: center; border-bottom: 2px dashed #cbd5e1; padding-bottom: 15px; margin-bottom: 15px;">
@@ -1364,7 +1271,7 @@
             <table style="width: 100%; font-size: 14px; margin-bottom: 15px; border-collapse: collapse;">
                 <tr><td style="color: #64748b; padding: 4px 0;">Siswa</td><td style="text-align: right; font-weight: bold; color: #1e293b;">${siswa.nama}</td></tr>
                 <tr><td style="color: #64748b; padding: 4px 0;">ID</td><td style="text-align: right; color: #1e293b;">${siswa.id}</td></tr>
-                <tr><td style="color: #64748b; padding: 4px 0;">Periode</td><td style="text-align: right; color: #1e293b;">${bln}</td></tr>
+                <tr><td style="color: #64748b; padding: 4px 0;">Periode</td><td style="text-align: right; font-weight: bold; color: #1e293b;">${namaBulan}</td></tr>
                 <tr><td style="color: #64748b; padding: 4px 0;">Total Sesi</td><td style="text-align: right; color: #1e293b;">${logs.length} Pertemuan</td></tr>
             </table>
             <div style="background: #f8fafd; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
@@ -1384,14 +1291,13 @@
                     ${statusText}
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 20px; color: #94a3b8; font-size: 12px;">
-                Terima kasih atas kepercayaan Anda! ✨<br>Dicetak otomatis oleh Sistem.
+            <div style="text-align: center; margin-top: 20px; color: #94a3b8; font-size: 12px; line-height: 1.4;">
+                ${strukNoteHtml}
             </div>
         `;
 
         Swal.fire({ title: 'Membuat Gambar Struk...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
 
-        // Generate image menggunakan library
         html2canvas(receiptTemplate, { scale: 2, backgroundColor: null }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             
@@ -1399,73 +1305,46 @@
                 const file = new File([blob], `Invoice_BimbelBee_${siswa.nama.replace(/\s+/g, '_')}_${bln}.png`, { type: 'image/png' });
                 Swal.close(); 
 
-                // Jika HP mendukung native share (Android/iOS)
+                // Fitur Native Share ke WA (Berfungsi di HP)
                 if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({
                             title: 'Invoice Bimbel Bee',
-                            text: `Berikut adalah bukti tagihan les an. ${siswa.nama} untuk bulan ${bln}.`,
+                            text: textWA,
                             files: [file]
                         });
                     } catch (error) {
-                        fallbackDownloadGambar(imgData, file.name);
+                        fallbackDownloadGambar(imgData, file.name, textWA, siswa.hp);
                     }
                 } else {
-                    fallbackDownloadGambar(imgData, file.name);
+                    fallbackDownloadGambar(imgData, file.name, textWA, siswa.hp);
                 }
             }, 'image/png');
         });
       }
 
-      function fallbackDownloadGambar(imgData, filename) {
+      function fallbackDownloadGambar(imgData, filename, textWA, noHP) {
+        let hpFormat = noHP.replace(/\D/g, ''); if(hpFormat.startsWith("0")) hpFormat = "62" + hpFormat.substring(1);
+        const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
+        
         Swal.fire({
-            title: 'Gambar Berhasil Dibuat!',
-            text: 'Karena Anda membukanya di Desktop, gambar akan otomatis diunduh. Silakan kirim file tersebut ke WhatsApp.',
-            imageUrl: imgData,
-            imageWidth: 250,
-            imageAlt: 'Invoice Preview',
-            confirmButtonText: '<i class="bi bi-download"></i> Unduh Gambar',
-            showCancelButton: true,
-            cancelButtonText: 'Tutup'
+            title: 'Struk Selesai Dibuat',
+            text: 'Silakan Unduh Gambar Struk di bawah ini, lalu klik Buka WhatsApp.',
+            imageUrl: imgData, imageWidth: 250, imageAlt: 'Invoice Preview',
+            showDenyButton: true, confirmButtonText: '<i class="bi bi-download"></i> Unduh Struk', denyButtonText: '<i class="bi bi-whatsapp"></i> Buka WA', denyButtonColor: '#10b981'
         }).then((result) => {
             if (result.isConfirmed) {
-                const a = document.createElement('a');
-                a.href = imgData; a.download = filename;
+                const a = document.createElement('a'); a.href = imgData; a.download = filename;
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            } else if (result.isDenied) {
+                window.open(waUrl, '_blank');
             }
         });
       }
 
-      function cetakInvoice(idSiswa) {
-        const bln = document.getElementById("searchLapBulan").value;
-        const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
-        const siswa = dataSiswa.find(s => s.id === idSiswa);
-        if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tagihan tidak ditemukan", "error");
-
-        let totalReg = 0, totalOver = 0, detailHtml = '';
-        logs.forEach(l => {
-          totalReg += l.reg; totalOver += l.over;
-          let tar = l.status === "Hadir" ? l.reg : l.over;
-          let tglParts = l.tgl.split(' '); 
-          let tglSaja = tglParts.slice(0, 3).join(' '); 
-          let jamSaja = tglParts[3] || '';
-          
-          detailHtml += `<tr><td><div style="font-weight: 600;">${l.hari}, ${tglSaja}</div><div style="color: #64748b; font-size: 9px; margin-top: 2px;">Pukul ${jamSaja} WIB</div></td><td>${l.status}</td><td class="text-right">Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
-        });
-        let grandTotal = totalReg + totalOver;
-        let tglCetak = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-        
-        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
-        let statusTagihanHtml = isLunas 
-            ? `<div style="margin-top: 10px; color: #10b981; font-weight: bold; font-size: 16px; border: 2px solid #10b981; padding: 5px; text-align: center; border-radius: 5px;">LUNAS</div>` 
-            : `<div style="margin-top: 10px; color: #ef4444; font-weight: bold; font-size: 16px; border: 2px solid #ef4444; padding: 5px; text-align: center; border-radius: 5px;">BELUM LUNAS</div>`;
-
-        const invoiceHTML = `<html><head><title>Invoice - ${siswa.nama}</title><style>@page { size: A5 portrait; margin: 15mm; } body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #333; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .invoice-box { max-width: 100%; margin: auto; } .header-table { width: 100%; margin-bottom: 20px; border-bottom: 2px solid #0084ff; padding-bottom: 10px; } .header-table td { vertical-align: top; } .title { font-size: 20px; font-weight: bold; color: #0084ff; letter-spacing: 1px; } .subtitle { font-size: 10px; color: #64748b; } .info-table { width: 100%; margin-bottom: 20px; font-size: 11px; } .info-table td { padding: 3px 0; vertical-align: top; } .info-table td:nth-child(1) { width: 80px; font-weight: bold; color: #555; } .info-table td:nth-child(2) { width: 15px; text-align: center; } .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; } .data-table th, .data-table td { padding: 6px 8px; border-bottom: 1px solid #eee; } .data-table th { background: #f8fafd; font-weight: bold; text-align: left; color: #444; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; } .text-right { text-align: right; } .total-section { float: right; width: 220px; font-size: 11px; } .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; } .grand-total { font-weight: bold; font-size: 14px; color: #ef4444; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; } .footer { text-align: center; margin-top: 50px; clear: both; font-size: 9px; color: #888; border-top: 1px solid #eee; padding-top: 10px;}</style></head><body onload="setTimeout(() => { window.print(); window.close(); }, 500)"><div class="invoice-box"><table class="header-table"><tr><td><div class="title">INVOICE TAGIHAN</div><div class="subtitle">Bimbel Bee</div></td><td class="text-right" style="font-size: 10px;"><strong>Periode:</strong> ${bln}<br><strong>Tanggal Cetak:</strong> ${tglCetak}</td></tr></table><table style="width: 100%; margin-bottom: 15px;"><tr><td style="width: 55%; vertical-align: top;"><table class="info-table"><tr><td>Nama Siswa</td><td>:</td><td>${siswa.nama}</td></tr><tr><td>ID Siswa</td><td>:</td><td>${siswa.id}</td></tr><tr><td>Jenjang</td><td>:</td><td>${siswa.jenjang}</td></tr></table></td><td style="width: 45%; vertical-align: top;"><table class="info-table"><tr><td>Nama Wali</td><td>:</td><td>${siswa.wali}</td></tr><tr><td>No. HP (WA)</td><td>:</td><td>${siswa.hp}</td></tr></table></td></tr></table><table class="data-table"><thead><tr><th>Hari, Tanggal & Waktu</th><th>Tipe Kehadiran</th><th class="text-right">Tarif Kehadiran</th></tr></thead><tbody>${detailHtml}</tbody></table><div class="total-section"><div class="total-row"><span>Total Reguler</span><span>Rp ${totalReg.toLocaleString("id-ID")}</span></div><div class="total-row"><span>Total Overtime</span><span>Rp ${totalOver.toLocaleString("id-ID")}</span></div><div class="grand-total"><span>TOTAL TAGIHAN</span><span>Rp ${grandTotal.toLocaleString("id-ID")}</span></div>${statusTagihanHtml}</div><div class="footer">Terima kasih atas kepercayaan Anda kepada kami.<br>Dokumen ini dihasilkan secara otomatis oleh sistem.</div></div></body></html>`;
-        const printWin = window.open("", "_blank"); printWin.document.write(invoiceHTML); printWin.document.close();
-      }
-
       function kirimWA(idSiswa) {
         const bln = document.getElementById("searchLapBulan").value;
+        const namaBulan = formatBulanIndo(bln);
         const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
         const siswa = dataSiswa.find(s => s.id === idSiswa);
         if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tidak ditemukan", "error");
@@ -1477,13 +1356,12 @@
         let hpFormat = siswa.hp.replace(/\D/g, ''); 
         if(hpFormat.startsWith("0")) hpFormat = "62" + hpFormat.substring(1);
         
-        // FIXED: Bersihkan URL dari hash (#) dan query (?) agar link murni dan valid
         const baseUrl = window.location.origin + window.location.pathname; 
         const simulatedWebLink = `${baseUrl}?id=${siswa.id}&bln=${bln}`;
 
         let textWA = waTemplate
             .replace(/\[NAMA_WALI\]/g, siswa.wali).replace(/\[NAMA_SISWA\]/g, siswa.nama)
-            .replace(/\[BULAN\]/g, bln).replace(/\[TOTAL_SESI\]/g, logs.length)
+            .replace(/\[BULAN\]/g, namaBulan).replace(/\[TOTAL_SESI\]/g, logs.length)
             .replace(/\[REGULER\]/g, totalReg.toLocaleString("id-ID"))
             .replace(/\[OVERTIME\]/g, totalOver.toLocaleString("id-ID"))
             .replace(/\[GRAND_TOTAL\]/g, grandTotal.toLocaleString("id-ID"))
@@ -1499,7 +1377,18 @@
       }
       function simpanTemplateWA() {
         waTemplate = document.getElementById("waTemplateInput").value;
+        localStorage.setItem('waTemplate', waTemplate);
         simpanLaluTutup('modalTemplateWA', 'Template Pesan WA');
+      }
+
+      function bukaModalTemplateStruk() {
+        document.getElementById("strukTemplateInput").value = strukTemplateNote;
+        new bootstrap.Modal(document.getElementById("modalTemplateStruk")).show();
+      }
+      function simpanTemplateStruk() {
+        strukTemplateNote = document.getElementById("strukTemplateInput").value;
+        localStorage.setItem('strukTemplateNote', strukTemplateNote);
+        simpanLaluTutup('modalTemplateStruk', 'Teks Struk Tagihan');
       }
       
       function exportExcel(tableId, filename) {
@@ -1546,29 +1435,39 @@
 
       function renderDataWali() {
         const nama = document.getElementById("pw-nama").innerText;
-        const idSiswa = document.getElementById("pw-id").innerText; // Ambil ID untuk check Lunas
+        const idSiswa = document.getElementById("pw-id").innerText; 
         const bln = document.getElementById("pw-filter-bulan").value;
         const tbody = document.getElementById("pw-tabel-rincian");
         let htmlStr = ""; let sReg = 0, sOver = 0;
         
         dataLog.filter((l) => l.nama === nama && l.bulan === bln).forEach((l) => {
             sReg += l.reg; sOver += l.over;
-            let b = l.status === "Hadir" ? "success" : "warning";
+            let typeClass = l.status === "Hadir" ? "text-success" : "text-warning fw-bold";
             let tar = l.status === "Hadir" ? l.reg : l.over;
             let tglPart = l.tgl.split(' ');
-            let tglSaja = tglPart.slice(0, 3).join(' ');
+            let tglSaja = `${tglPart[0]} ${tglPart[1]}`;
             let jamSaja = tglPart[3] || '';
 
-            htmlStr += `<tr><td class="text-nowrap fw-bold">${l.hari}, ${l.tgl.split(' ')[0]} ${l.tgl.split(' ')[1]} ${l.tgl.split(' ')[2]}<br><small class="text-muted fw-normal">${l.tgl.split(' ')[3]} WIB</small></td><td class="text-nowrap"><span class="badge bg-${b}">${l.status}</span></td><td class="text-nowrap">Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
+            // PERBAIKAN: Flex List Rincian Anti-Mengsle di Wali Portal
+            htmlStr += `
+            <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle py-2">
+                <div class="text-start">
+                    <div class="fw-bold" style="font-size:0.85rem;">${l.hari}, ${tglSaja}</div>
+                    <small class="text-muted">${jamSaja} WIB</small>
+                </div>
+                <div class="text-end">
+                    <div class="${typeClass}" style="font-size:0.8rem;"><i class="bi bi-circle-fill small"></i> ${l.status}</div>
+                    <div class="fw-bold text-primary" style="font-size:0.85rem;">Rp ${tar.toLocaleString("id-ID")}</div>
+                </div>
+            </div>`;
         });
         
-        if (htmlStr === "") htmlStr = `<tr><td colspan="3" class="text-center text-muted">Belum ada data kehadiran bulan ini.</td></tr>`;
+        if (htmlStr === "") htmlStr = `<div class="text-center text-muted py-3">Belum ada data kehadiran bulan ini.</div>`;
         tbody.innerHTML = htmlStr;
         
         document.getElementById("pw-sum-reguler").innerText = `Rp ${sReg.toLocaleString("id-ID")}`; 
         document.getElementById("pw-sum-overtime").innerText = `Rp ${sOver.toLocaleString("id-ID")}`; 
         
-        // Cek Status Lunas
         let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
         let stampHtml = isLunas ? `<div class="mt-2"><span class="badge bg-success w-100 py-2"><i class="bi bi-check-circle"></i> SUDAH LUNAS</span></div>` : '';
         
@@ -1664,10 +1563,7 @@
       function toggleSidebar() { document.getElementById("sidebar").classList.toggle("show"); document.getElementById("mobileOverlay").classList.toggle("show"); }
       function toggleTheme() {
         const html = document.documentElement; const newTheme = html.getAttribute("data-bs-theme") === "light" ? "dark" : "light"; html.setAttribute("data-bs-theme", newTheme);
-        
-        // PERBAIKAN: Simpan state ke LocalStorage saat tombol diklik
         localStorage.setItem('theme', newTheme);
-        
         const iconClass = newTheme === "light" ? "bi bi-moon-fill" : "bi bi-sun-fill";
         document.querySelector("#themeToggleBtn i").className = iconClass; document.querySelector("#themeToggleBtnWali i").className = iconClass + " text-secondary";
       }
