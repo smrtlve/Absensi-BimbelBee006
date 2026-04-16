@@ -211,10 +211,20 @@
         #menu-dashboard .table-responsive tbody td::before, #menu-absen .table-responsive tbody td::before { display: none; }
         #menu-dashboard .table-responsive tbody td:last-child, #menu-absen .table-responsive tbody td:last-child { text-align: right; }
 
-        /* Pengecualian Rincian Invoice (Bebas Nested Table) */
+        /* PERBAIKAN MASTER: Mencegah Rincian Invoice (Nested Table) ikutan tergencet layout card mobile */
         .table-responsive tbody tr.collapse.show { display: block; }
         .table-responsive tbody tr.collapse:not(.show) { display: none !important; }
         .table-responsive tbody tr.collapse { border: none; background: transparent; box-shadow: none; padding: 0; margin: 0; margin-top: -10px; }
+        
+        /* Hilangkan display flex & width 35% pseudo dari TD pembungkus rincian collapse */
+        .table-responsive tbody tr.collapse td { 
+            display: block !important; 
+            text-align: left !important; 
+            width: 100% !important; 
+            padding: 0 !important; 
+            border: none !important; 
+        }
+        .table-responsive tbody tr.collapse td::before { display: none !important; }
 
         .badge { font-size: 0.75rem !important; padding: 0.4em 0.6em !important; }
         .btn-sm { font-size: 0.85rem !important; padding: 0.35rem 0.6rem !important; }
@@ -786,16 +796,17 @@
         tbody.innerHTML = htmlStr;
       }
 
+      // PERBAIKAN: Group Tarif dengan Flex-Wrap End agar proporsional dan tidak terpotong
       function renderTabelTarif() {
         const tbody = document.getElementById("body-tabel-tarif");
         let htmlStr = "";
         dataTarif.forEach((t, index) => {
-          const jenjangHtml = t.jenjang.split(', ').map(j => `<span class="badge bg-secondary me-1 mb-1 fw-normal">${j}</span>`).join('');
-          const hariHtml = t.hari.split(', ').map(h => `<span class="badge bg-light text-dark border me-1 mb-1 fw-normal">${h}</span>`).join('');
+          const jenjangHtml = t.jenjang.split(', ').map(j => `<span class="badge bg-secondary fw-normal">${j}</span>`).join('');
+          const hariHtml = t.hari.split(', ').map(h => `<span class="badge bg-light text-dark border fw-normal">${h}</span>`).join('');
           htmlStr += `<tr>
           <td data-label="Nama Grup" class="fw-bold text-primary">${t.nama}</td>
-          <td data-label="Jenjang Berlaku">${jenjangHtml}</td>
-          <td data-label="Hari Berlaku">${hariHtml}</td>
+          <td data-label="Jenjang Berlaku"><div class="d-flex flex-wrap justify-content-end gap-1">${jenjangHtml}</div></td>
+          <td data-label="Hari Berlaku"><div class="d-flex flex-wrap justify-content-end gap-1">${hariHtml}</div></td>
           <td data-label="Tarif Reguler">Rp ${t.reg.toLocaleString("id-ID")}</td>
           <td data-label="Tarif Overtime">Rp ${t.over.toLocaleString("id-ID")}</td>
           <td data-label="Aksi">
@@ -1134,7 +1145,7 @@
           let btnLunasIcon = isLunas ? 'bi-x-circle' : 'bi-check-circle';
           let btnLunasText = isLunas ? 'Batal Lunas' : 'Set Lunas';
 
-          // PERBAIKAN: List Detail Tanpa Nested Table agar di Mobile Rapi
+          // PERBAIKAN: Flex List Detail Anti Mengsle
           g.details.forEach((d) => {
             let typeClass = d.status === "Hadir" ? "text-success" : "text-warning fw-bold";
             let tglPart = d.tgl.split(' ');
@@ -1171,7 +1182,7 @@
             </td>
           </tr>
           <tr id="${idRow}" class="collapse bg-transparent">
-            <td colspan="6" class="p-0 border-0">
+            <td colspan="6">
               <div class="card card-body border-0 p-3 shadow-sm rounded-3 mt-2" style="background-color: var(--bg-color);">
                 <small class="fw-bold mb-2 text-primary border-bottom pb-2"><i class="bi bi-list-check"></i> Rincian Sesi Kehadiran</small>
                 <div class="rincian-list">
@@ -1206,7 +1217,7 @@
 
       function cetakInvoice(idSiswa) {
         const bln = document.getElementById("searchLapBulan").value;
-        const namaBulan = formatBulanIndo(bln); // PERBAIKAN: Format Nama Bulan
+        const namaBulan = formatBulanIndo(bln);
         const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
         const siswa = dataSiswa.find(s => s.id === idSiswa);
         if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tagihan tidak ditemukan", "error");
@@ -1234,7 +1245,6 @@
         const printWin = window.open("", "_blank"); printWin.document.write(invoiceHTML); printWin.document.close();
       }
 
-      // PERBAIKAN: Fungsi Kirim WA Gambar + Text Native (Share API)
       async function kirimTagihanLengkap(idSiswa) {
         const bln = document.getElementById("searchLapBulan").value;
         const namaBulan = formatBulanIndo(bln);
@@ -1254,7 +1264,7 @@
 
         let textWA = waTemplate
             .replace(/\[NAMA_WALI\]/g, siswa.wali).replace(/\[NAMA_SISWA\]/g, siswa.nama)
-            .replace(/\[BULAN\]/g, namaBulan).replace(/\[TOTAL_SESI\]/g, logs.length) // Pake namaBulan
+            .replace(/\[BULAN\]/g, namaBulan).replace(/\[TOTAL_SESI\]/g, logs.length) 
             .replace(/\[REGULER\]/g, totalReg.toLocaleString("id-ID"))
             .replace(/\[OVERTIME\]/g, totalOver.toLocaleString("id-ID"))
             .replace(/\[GRAND_TOTAL\]/g, grandTotal.toLocaleString("id-ID"))
@@ -1305,7 +1315,6 @@
                 const file = new File([blob], `Invoice_BimbelBee_${siswa.nama.replace(/\s+/g, '_')}_${bln}.png`, { type: 'image/png' });
                 Swal.close(); 
 
-                // Fitur Native Share ke WA (Berfungsi di HP)
                 if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({
@@ -1448,7 +1457,6 @@
             let tglSaja = `${tglPart[0]} ${tglPart[1]}`;
             let jamSaja = tglPart[3] || '';
 
-            // PERBAIKAN: Flex List Rincian Anti-Mengsle di Wali Portal
             htmlStr += `
             <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle py-2">
                 <div class="text-start">
