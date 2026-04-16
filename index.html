@@ -416,6 +416,10 @@
       let editAdminOldUser = null;
       let html5QrcodeScanner = null; // FIXED: Deklarasi Scanner Global agar tidak crash
 
+      // Scanner Cooldown State (Anti Double-Scan)
+      let lastScanValue = "";
+      let lastScanTime = 0;
+
       let waTemplate = `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Overtime: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice (PDF) otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\nMohon kesediaannya menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
 
       window.onload = async function () {
@@ -868,9 +872,27 @@
       function initScanner() {
         document.getElementById("btnMulaiKamera").style.display = "none";
         if (!html5QrcodeScanner) {
-          html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+          html5QrcodeScanner = new Html5QrcodeScanner(
+             "reader", 
+             { 
+                 fps: 30, // Ditingkatkan dari 10 ke 30 agar baca QR jadi secepat kilat
+                 qrbox: { width: 250, height: 250 },
+                 disableFlip: false
+             }, 
+             false
+          );
           html5QrcodeScanner.render((decodedText) => { 
-              stopScanner(); 
+              const currentTime = Date.now();
+              
+              // Jeda/Cooldown 3 detik untuk QR yang sama agar tidak spam absen dobel
+              if (decodedText === lastScanValue && (currentTime - lastScanTime) < 3000) {
+                  return; 
+              }
+              
+              lastScanValue = decodedText;
+              lastScanTime = currentTime;
+              
+              // HAPUS PEMANGGILAN stopScanner() di sini agar kamera tidak mati!
               catatKehadiran(decodedText, 'Scanner');
             }, () => {} 
           );
