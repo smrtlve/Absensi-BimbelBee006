@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Portal Absensi Les - Bimbel Bee ✨</title>
 
+    <!-- Eksekusi Theme Paling Awal agar tidak Flash Putih saat Refresh -->
     <script>
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute("data-bs-theme", savedTheme);
@@ -93,14 +94,12 @@
       [data-bs-theme="dark"] .btn-themebar { background-color: var(--card-bg); color: var(--text-main); border-color: var(--border-color); }
       [data-bs-theme="dark"] .btn-themebar:hover { background-color: #334155; }
 
-      /* Form Controls */
+      /* Form Controls - Peningkatan Jarak Padding Ikon agar tidak nabrak teks */
       .form-control, .form-select { background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 0.5rem 0.75rem; }
       .form-control:focus, .form-select:focus { background-color: var(--bg-color); color: var(--text-main); border-color: var(--primary-color); box-shadow: 0 0 0 0.25rem rgba(0, 132, 255, 0.25); }
       .input-icon-wrapper { position: relative; width: 100%; }
       .input-icon-wrapper i { position: absolute; top: 50%; transform: translateY(-50%); left: 0.85rem; color: var(--text-muted); pointer-events: none; z-index: 5; }
       .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.8rem !important; }
-      .toggle-pw { left: auto !important; right: 0.85rem !important; pointer-events: auto !important; cursor: pointer; color: var(--text-muted); }
-      .toggle-pw:hover { color: var(--text-main); }
       
       input[type="date"], input[type="month"], input[type="time"] { position: relative; color: var(--text-main) !important; }
       input[type="date"]::-webkit-calendar-picker-indicator, input[type="month"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: auto; height: auto; color: transparent; background: transparent; cursor: pointer; }
@@ -203,9 +202,7 @@
         }
         
         .table-responsive tbody td > div, .table-responsive tbody td > button, .table-responsive tbody td > small { text-align: right; }
-        
-        /* Spacing Tombol Aksi HP Diperlebar agar anti miss-click */
-        .table-responsive tbody td .d-flex { justify-content: flex-end; width: 100%; gap: 0.5rem !important; flex-wrap: wrap; }
+        .table-responsive tbody td .d-flex { justify-content: flex-end; width: 100%; gap: 0.3rem !important; flex-wrap: wrap; }
 
         /* Pengecualian Dashboard & Log Scanner (Sederhana) */
         #menu-dashboard .table-responsive .table, #menu-absen .table-responsive .table { border-spacing: 0; margin-top: 0; }
@@ -214,11 +211,12 @@
         #menu-dashboard .table-responsive tbody td::before, #menu-absen .table-responsive tbody td::before { display: none; }
         #menu-dashboard .table-responsive tbody td:last-child, #menu-absen .table-responsive tbody td:last-child { text-align: right; }
 
-        /* Mencegah Rincian Invoice & Riwayat Presensi (Nested Table/List) ikutan tergencet */
+        /* PERBAIKAN MASTER: Mencegah Rincian Invoice (Nested Table) ikutan tergencet layout card mobile */
         .table-responsive tbody tr.collapse.show { display: block; }
         .table-responsive tbody tr.collapse:not(.show) { display: none !important; }
         .table-responsive tbody tr.collapse { border: none; background: transparent; box-shadow: none; padding: 0; margin: 0; margin-top: -10px; }
         
+        /* Hilangkan display flex & width 35% pseudo dari TD pembungkus rincian collapse */
         .table-responsive tbody tr.collapse td { 
             display: block !important; 
             text-align: left !important; 
@@ -229,7 +227,7 @@
         .table-responsive tbody tr.collapse td::before { display: none !important; }
 
         .badge { font-size: 0.75rem !important; padding: 0.4em 0.6em !important; }
-        .btn-sm { font-size: 0.85rem !important; padding: 0.4rem 0.65rem !important; } /* Tombol diperbesar dikit */
+        .btn-sm { font-size: 0.85rem !important; padding: 0.35rem 0.6rem !important; }
         .form-control, .form-select { font-size: 0.95rem !important; padding: 0.5rem 0.75rem !important; }
         .card-header-custom { padding: 0.85rem 1rem !important; font-size: 1rem !important; }
         .content-area { padding: 0.85rem; padding-bottom: 80px; }
@@ -237,11 +235,14 @@
     </style>
   </head>
   <body>
-    <div id="receipt-container-wrapper" style="position: fixed; top: 0; left: 0; z-index: -9999; opacity: 0; pointer-events: none;">
+    <!-- KANVAS STRUK INVOICE (Disembunyikan, untuk fitur share gambar) -->
+    <div id="receipt-container-wrapper" style="position: absolute; top: -9999px; left: -9999px; z-index: -99;">
         <div id="receipt-template" style="width: 400px; background: #ffffff; color: #1e293b; padding: 25px; font-family: 'Nunito', sans-serif; border-radius: 16px; border: 1px solid #e2e8f0; box-sizing: border-box;">
-            </div>
+            <!-- Render Struk Dinamis di sini -->
+        </div>
     </div>
 
+    <!-- LOADING OVERLAY -->
     <div id="api-loader">
         <div class="loader-spinner"></div>
         <h5 class="fw-bold m-0">Menyinkronkan Database...</h5>
@@ -250,6 +251,7 @@
 
     <datalist id="listSiswaSuggestion"></datalist>
 
+    <!-- PORTAL WALI (LANDING PAGE) -->
     <div id="portal-wali" class="min-vh-100 position-relative d-none" style="background: var(--bg-color)">
       <div class="p-3 d-flex justify-content-between align-items-center bg-transparent position-absolute w-100 z-3">
         <div class="d-flex align-items-center gap-2">
@@ -297,18 +299,20 @@
 
         <div class="row g-3 mb-4">
           <div class="col-md-4"><div class="custom-card p-3 border-start border-4 border-primary"><p class="text-muted mb-1 small fw-bold text-uppercase" style="font-size:0.75rem;">Total Reguler (Nominal)</p><h4 class="m-0 fw-bold" id="pw-sum-reguler">Rp 0</h4></div></div>
-          <div class="col-md-4"><div class="custom-card p-3 border-start border-4 border-warning"><p class="text-muted mb-1 small fw-bold text-uppercase" style="font-size:0.75rem;">Total Jam Tambahan (Nominal)</p><h4 class="m-0 fw-bold" id="pw-sum-overtime">Rp 0</h4></div></div>
+          <div class="col-md-4"><div class="custom-card p-3 border-start border-4 border-warning"><p class="text-muted mb-1 small fw-bold text-uppercase" style="font-size:0.75rem;">Total Overtime (Nominal)</p><h4 class="m-0 fw-bold" id="pw-sum-overtime">Rp 0</h4></div></div>
           <div class="col-md-4"><div class="custom-card p-3 border-start border-4 border-danger bg-danger-subtle"><p class="text-danger mb-1 small fw-bold text-uppercase" style="font-size:0.75rem;">Estimasi Tagihan Total</p><h4 class="m-0 fw-bold text-danger" id="pw-sum-total">Rp 0</h4></div></div>
         </div>
 
         <div class="custom-card">
           <div class="card-header-custom">Rincian Kehadiran Anak</div>
           <div class="p-3" id="pw-tabel-rincian">
-            </div>
+            <!-- Render Flex List Here -->
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- PORTAL ADMIN (DASHBOARD UTAMA) -->
     <div id="portal-admin" class="d-none">
       <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
       <aside id="sidebar">
@@ -321,7 +325,7 @@
           <div class="nav-item" data-access="siswa"><a href="#" class="nav-link" onclick="switchMenu('menu-siswa', this)"><i class="bi bi-people-fill"></i> Data Siswa</a></div>
           <div class="nav-item" data-access="tarif"><a href="#" class="nav-link" onclick="switchMenu('menu-tarif', this)"><i class="bi bi-tags-fill"></i> Pengaturan Tarif</a></div>
           <div class="small text-muted fw-bold mt-3 mb-2 px-2 text-uppercase" style="font-size:0.75rem;">Laporan & Riwayat</div>
-          <div class="nav-item" data-access="log"><a href="#" class="nav-link" onclick="switchMenu('menu-log', this)"><i class="bi bi-clock-history"></i> Riwayat Presensi</a></div>
+          <div class="nav-item" data-access="log"><a href="#" class="nav-link" onclick="switchMenu('menu-log', this)"><i class="bi bi-clock-history"></i> Log Kehadiran</a></div>
           <div class="nav-item" data-access="laporan"><a href="#" class="nav-link" onclick="switchMenu('menu-laporan', this)"><i class="bi bi-receipt"></i> Laporan & Invoice</a></div>
           <div class="small text-muted fw-bold mt-3 mb-2 px-2 text-uppercase" style="font-size:0.75rem;">Sistem</div>
           <div class="nav-item" data-access="role"><a href="#" class="nav-link" onclick="switchMenu('menu-role', this)"><i class="bi bi-shield-lock-fill"></i> Manajemen Role</a></div>
@@ -354,7 +358,7 @@
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><div class="stat-card blue"><i class="bi bi-people-fill stat-icon"></i><h6 class="fw-bold mb-1 small">Total Siswa</h6><h4 class="m-0 fw-bold" id="stat-total-siswa">0</h4></div></div>
               <div class="col-md-3 col-6"><div class="stat-card green"><i class="bi bi-check-circle-fill stat-icon"></i><h6 class="fw-bold mb-1 small">Total Hadir (Bulan Ini)</h6><h4 class="m-0 fw-bold" id="stat-hadir">0</h4></div></div>
-              <div class="col-md-3 col-6"><div class="stat-card orange"><i class="bi bi-clock-fill stat-icon"></i><h6 class="fw-bold mb-1 small">Total Jam Tambahan</h6><h4 class="m-0 fw-bold" id="stat-overtime">0</h4></div></div>
+              <div class="col-md-3 col-6"><div class="stat-card orange"><i class="bi bi-clock-fill stat-icon"></i><h6 class="fw-bold mb-1 small">Total Overtime</h6><h4 class="m-0 fw-bold" id="stat-overtime">0</h4></div></div>
               <div class="col-md-3 col-6"><div class="stat-card purple"><i class="bi bi-cash-stack stat-icon"></i><h6 class="fw-bold mb-1 small">Est. Pemasukan</h6><h4 class="m-0 fw-bold" id="stat-pemasukan">Rp 0</h4></div></div>
             </div>
             
@@ -362,7 +366,7 @@
               <div class="col-lg-7 col-md-12">
                 <div class="custom-card w-100 mb-0">
                   <div class="card-header-custom">Aktivitas Kehadiran Terakhir</div>
-                  <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                  <div class="table-responsive">
                     <table class="table m-0" style="min-width: auto;">
                       <tbody id="body-aktivitas-terakhir"></tbody>
                     </table>
@@ -381,6 +385,7 @@
 
           <div id="menu-absen" class="menu-section d-none">
             <div class="row g-3">
+              <!-- Kolom Scanner -->
               <div class="col-lg-7">
                 <div class="custom-card p-3 h-100">
                   <ul class="nav nav-pills nav-fill mb-3" role="tablist">
@@ -392,19 +397,21 @@
                     <div class="tab-pane fade p-3" id="nav-manual">
                       <div class="mb-3">
                         <label class="form-label fw-bold small">Nama Siswa</label><div class="input-icon-wrapper mb-3"><i class="bi bi-person"></i><input type="text" class="form-control" list="listSiswaSuggestion" id="manualSiswa" placeholder="Ketik nama siswa..." /></div>
-                        <label class="form-label fw-bold small">Tipe Kehadiran</label><select class="form-select" id="manualTipe"><option value="Hadir">Reguler (Hadir)</option><option value="Overtime">Khusus / Jam Tambahan</option></select>
+                        <label class="form-label fw-bold small">Tipe Kehadiran</label><select class="form-select" id="manualTipe"><option value="Hadir">Reguler (Hadir)</option><option value="Overtime">Khusus / Overtime</option></select>
                       </div>
                       <button class="btn btn-primary w-100 py-2 fw-bold" onclick="simpanManual()"><i class="bi bi-check-circle"></i> Catat Kehadiran</button>
                     </div>
                   </div>
                 </div>
               </div>
+              <!-- Kolom Daftar Hadir Instan -->
               <div class="col-lg-5">
                 <div class="custom-card p-3 h-100">
                   <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="bi bi-clock-history text-primary"></i> Scan Berhasil (Hari Ini)</h6>
                   <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                     <table class="table table-hover table-sm" style="min-width: auto;">
                       <tbody id="scanner-log-body">
+                         <!-- Auto Populated by JS -->
                       </tbody>
                     </table>
                   </div>
@@ -432,15 +439,15 @@
           <div id="menu-tarif" class="menu-section d-none">
             <div class="custom-card">
               <div class="card-header-custom"><span>Daftar Grup Tarif Otomatis</span><button class="btn btn-primary btn-sm" onclick="openTarifModal()"><i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">Tambah</span></button></div>
-              <div class="table-responsive"><table class="table table-hover" id="tabelTarif"><thead><tr><th>Nama Grup Tarif</th><th>Jenjang Berlaku</th><th>Hari Berlaku</th><th>Tarif Reguler</th><th>Tarif Jam Tambahan</th><th>Aksi</th></tr></thead><tbody id="body-tabel-tarif"></tbody></table></div>
+              <div class="table-responsive"><table class="table table-hover" id="tabelTarif"><thead><tr><th>Nama Grup Tarif</th><th>Jenjang Berlaku</th><th>Hari Berlaku</th><th>Tarif Reguler</th><th>Tarif Overtime</th><th>Aksi</th></tr></thead><tbody id="body-tabel-tarif"></tbody></table></div>
             </div>
           </div>
 
           <div id="menu-log" class="menu-section d-none">
             <div class="custom-card">
-              <div class="card-header-custom">Riwayat Presensi & Nominal</div>
+              <div class="card-header-custom">Riwayat Presensi & Nominal Lembur</div>
               <div class="p-3 border-bottom"><div class="row g-2"><div class="col-md-6"><div class="input-icon-wrapper"><i class="bi bi-search"></i><input type="text" id="searchLogName" list="listSiswaSuggestion" class="form-control" placeholder="Cari Nama Siswa..." oninput="filterLog()" /></div></div><div class="col-md-6"><div class="input-icon-wrapper"><i class="bi bi-calendar-month"></i><input type="month" id="searchLogBulan" class="form-control" onchange="filterLog()" /></div></div></div></div>
-              <div class="table-responsive"><table class="table table-hover" id="tabelLog"><thead><tr><th>Nama Siswa</th><th>Total Kehadiran</th><th>Aksi</th></tr></thead><tbody id="body-tabel-log"></tbody></table></div>
+              <div class="table-responsive"><table class="table table-hover" id="tabelLog"><thead><tr><th>Hari & Waktu</th><th>Nama Siswa</th><th>Status</th><th>Tarif Reguler (Edit)</th><th>Tarif Overtime (Edit)</th><th>Aksi</th></tr></thead><tbody id="body-tabel-log"></tbody></table></div>
             </div>
           </div>
 
@@ -470,7 +477,7 @@
                   </div>
                 </div>
               </div>
-              <div class="table-responsive"><table class="table table-hover" id="tabelInvoice"><thead><tr><th>Siswa</th><th>Nominal Reguler</th><th>Nominal Jam Tambahan</th><th>Total Tagihan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="body-tabel-laporan"></tbody></table></div>
+              <div class="table-responsive"><table class="table table-hover" id="tabelInvoice"><thead><tr><th>Siswa</th><th>Nominal Reguler</th><th>Nominal Overtime</th><th>Total Tagihan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="body-tabel-laporan"></tbody></table></div>
             </div>
           </div>
 
@@ -499,6 +506,7 @@
       </nav>
     </div>
 
+    <!-- MODALS AREA -->
     <div class="modal fade" id="modalIDCard" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-0 pb-0"><h6 class="modal-title fw-bold">Kartu Tanda Siswa</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center pb-4"><div class="id-card-container" id="printable-id-card"><i class="bi bi-book-half id-card-bg-icon"></i><div class="id-card-details"><h5 class="fw-bold m-0" style="color: var(--primary-color)">Bimbel Bee</h5><div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 6px;">Kartu Identitas Siswa Les</div><div class="fw-bold m-0" id="idcard-nama" style="font-size: 1.15rem; color: var(--text-main)">-</div><div style="font-size: 0.85rem; color: var(--text-main)"><strong id="idcard-id">-</strong></div><div style="font-size: 0.75rem; margin-top: 5px; color: var(--text-main)" id="idcard-jenjang">-</div><div style="font-size: 0.7rem; margin-top: 2px; color: var(--text-main)"><i class="bi bi-person"></i> <span id="idcard-wali">-</span></div><div style="font-size: 0.7rem; margin-top: 2px; color: var(--text-main)"><i class="bi bi-telephone"></i> <span id="idcard-hp">-</span></div></div><div class="id-card-qr"><img id="idcard-qr-img" src="" width="100%" height="100%" alt="QR" /></div></div><button class="btn btn-primary btn-sm w-100 mt-4" onclick="cetakIDCard()"><i class="bi bi-printer"></i> Cetak Layout Presisi (A4)</button></div></div></div></div>
 
     <div class="modal fade" id="modalSiswa" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Form Data Siswa</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
@@ -508,23 +516,16 @@
       <hr class="text-muted opacity-25">
       <div class="input-icon-wrapper mb-3"><i class="bi bi-people"></i><input type="text" class="form-control" id="formWali" placeholder="Nama Lengkap Wali" /></div>
       <div class="mb-3 ps-1"><label class="form-label small fw-bold text-muted mb-1">Jenis Kelamin Wali</label><div class="d-flex gap-3"><div class="form-check"><input class="form-check-input" type="radio" name="genderWali" id="waliL" value="L" checked><label class="form-check-label" for="waliL">Laki-laki</label></div><div class="form-check"><input class="form-check-input" type="radio" name="genderWali" id="waliP" value="P"><label class="form-check-label" for="waliP">Perempuan</label></div></div></div>
-      <div class="input-icon-wrapper mb-3"><i class="bi bi-whatsapp"></i><input type="text" class="form-control" id="formHP" placeholder="No WA Wali (0812...)" /></div>
-      <div class="input-icon-wrapper position-relative">
-        <i class="bi bi-key"></i>
-        <input type="password" class="form-control" id="formPin" placeholder="PIN Akses Wali (Angka)" />
-        <i class="bi bi-eye-slash position-absolute toggle-pw" style="top: 50%; transform: translateY(-50%);" onclick="togglePasswordVisibility('formPin', this)"></i>
-      </div>
-      <small class="text-muted ms-2">PIN digunakan wali untuk melihat rincian di Portal Wali</small>
+      <div class="input-icon-wrapper mb-3"><i class="bi bi-whatsapp"></i><input type="text" class="form-control" id="formHP" placeholder="No WA Wali (0812...)" /></div><div class="input-icon-wrapper"><i class="bi bi-key"></i><input type="password" class="form-control" id="formPin" placeholder="PIN Akses Wali (Angka)" /></div><small class="text-muted ms-2">PIN digunakan wali untuk melihat rincian di Portal Wali</small>
     </div><div class="modal-footer"><button type="button" class="btn btn-primary w-100" onclick="simpanSiswaBaruKeAPI()">Simpan Data</button></div></div></div></div>
 
-    <div class="modal fade" id="modalTarif" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Form Grup Tarif Otomatis</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="input-icon-wrapper mb-3"><i class="bi bi-tag"></i><input type="text" class="form-control" id="tarifNama" placeholder="Nama Grup Tarif" /></div><label class="form-label small fw-bold">Jenjang Berlaku (Pilih >= 1)</label><div class="dropdown mb-3"><button class="form-select text-start" type="button" data-bs-toggle="dropdown" id="btnDropdownJenjang">Pilih Jenjang...</button><ul class="dropdown-menu w-100 dropdown-menu-checkboxes shadow" id="listJenjangDiv" onclick="event.stopPropagation()"></ul></div><div class="input-icon-wrapper mb-3 d-none" id="inputJenjangTarifLainnyaWrapper"><i class="bi bi-pencil"></i><input type="text" class="form-control" id="inputJenjangTarifLainnya" placeholder="Ketik Jenjang Lainnya (Bisa dipisah koma)..." /></div><label class="form-label small fw-bold">Hari Berlaku (Otomatis deteksi hari absen)</label><div class="dropdown mb-3"><button class="form-select text-start" type="button" data-bs-toggle="dropdown" id="btnDropdownHari">Pilih Hari...</button><ul class="dropdown-menu w-100 dropdown-menu-checkboxes shadow" id="listHariDiv" onclick="event.stopPropagation()"><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Senin" id="hr1" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr1">Senin</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Selasa" id="hr2" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr2">Selasa</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Rabu" id="hr3" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr3">Rabu</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Kamis" id="hr4" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr4">Kamis</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Jumat" id="hr5" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr5">Jumat</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Sabtu" id="hr6" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr6">Sabtu</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Minggu" id="hr7" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr7">Minggu</label></div></li></ul></div><div class="row"><div class="col-6"><label class="form-label small fw-bold">Tarif Reguler</label><div class="input-icon-wrapper"><i class="bi bi-cash"></i><input type="number" class="form-control" id="tarifReg" value="0" /></div></div><div class="col-6"><label class="form-label small fw-bold">Tarif Jam Tambahan</label><div class="input-icon-wrapper"><i class="bi bi-cash-stack"></i><input type="number" class="form-control" id="tarifOver" value="0" /></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary w-100" onclick="simpanTarifKeAPI()">Simpan Tarif</button></div></div></div></div>
+    <div class="modal fade" id="modalTarif" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Form Grup Tarif Otomatis</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="input-icon-wrapper mb-3"><i class="bi bi-tag"></i><input type="text" class="form-control" id="tarifNama" placeholder="Nama Grup Tarif" /></div><label class="form-label small fw-bold">Jenjang Berlaku (Pilih >= 1)</label><div class="dropdown mb-3"><button class="form-select text-start" type="button" data-bs-toggle="dropdown" id="btnDropdownJenjang">Pilih Jenjang...</button><ul class="dropdown-menu w-100 dropdown-menu-checkboxes shadow" id="listJenjangDiv" onclick="event.stopPropagation()"></ul></div><div class="input-icon-wrapper mb-3 d-none" id="inputJenjangTarifLainnyaWrapper"><i class="bi bi-pencil"></i><input type="text" class="form-control" id="inputJenjangTarifLainnya" placeholder="Ketik Jenjang Lainnya (Bisa dipisah koma)..." /></div><label class="form-label small fw-bold">Hari Berlaku (Otomatis deteksi hari absen)</label><div class="dropdown mb-3"><button class="form-select text-start" type="button" data-bs-toggle="dropdown" id="btnDropdownHari">Pilih Hari...</button><ul class="dropdown-menu w-100 dropdown-menu-checkboxes shadow" id="listHariDiv" onclick="event.stopPropagation()"><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Senin" id="hr1" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr1">Senin</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Selasa" id="hr2" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr2">Selasa</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Rabu" id="hr3" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr3">Rabu</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Kamis" id="hr4" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr4">Kamis</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Jumat" id="hr5" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr5">Jumat</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Sabtu" id="hr6" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr6">Sabtu</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Minggu" id="hr7" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr7">Minggu</label></div></li></ul></div><div class="row"><div class="col-6"><label class="form-label small fw-bold">Tarif Reguler</label><div class="input-icon-wrapper"><i class="bi bi-cash"></i><input type="number" class="form-control" id="tarifReg" value="0" /></div></div><div class="col-6"><label class="form-label small fw-bold">Tarif Overtime</label><div class="input-icon-wrapper"><i class="bi bi-cash-stack"></i><input type="number" class="form-control" id="tarifOver" value="0" /></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary w-100" onclick="simpanTarifKeAPI()">Simpan Tarif</button></div></div></div></div>
 
-    <div class="modal fade" id="modalRole" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Hak Akses / Akun</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="roleCheckboxes"><div class="mb-3 input-icon-wrapper"><i class="bi bi-person"></i><input type="text" class="form-control form-control-sm" id="formAdminUser" placeholder="Username" /></div>
-    <div class="mb-3 input-icon-wrapper position-relative"><i class="bi bi-key"></i><input type="password" class="form-control form-control-sm" id="formAdminPass" placeholder="Password (Kosongi jk tdk ubah)" /><i class="bi bi-eye-slash position-absolute toggle-pw" style="top: 50%; transform: translateY(-50%);" onclick="togglePasswordVisibility('formAdminPass', this)"></i></div>
-    <div class="mb-3 input-icon-wrapper"><i class="bi bi-person-badge"></i><input type="text" class="form-control form-control-sm" id="formAdminNama" placeholder="Nama Lengkap Admin" /></div><div class="mb-3"><select class="form-select form-select-sm" id="formAdminRole"><option value="Admin Biasa">Admin Biasa</option><option value="SuperAdmin">SuperAdmin</option></select></div><hr /><div id="privilege-area" class="small"><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-dashboard" checked /><label class="form-check-label ms-2" for="cb-dashboard">Dashboard</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-absen" checked /><label class="form-check-label ms-2" for="cb-absen">Absensi</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-siswa" checked /><label class="form-check-label ms-2" for="cb-siswa">Data Siswa</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-tarif" /><label class="form-check-label ms-2" for="cb-tarif">Pengaturan Tarif</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-log" checked /><label class="form-check-label ms-2" for="cb-log">Log Kehadiran</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-laporan" checked /><label class="form-check-label ms-2" for="cb-laporan">Laporan</label></div><div class="form-check form-switch"><input class="form-check-input role-cb" type="checkbox" id="cb-role" /><label class="form-check-label ms-2" for="cb-role">Manajemen Role</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary btn-sm w-100" onclick="simpanAdminKeAPI()">Simpan Pengaturan</button></div></div></div></div>
+    <div class="modal fade" id="modalRole" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Hak Akses / Akun</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="roleCheckboxes"><div class="mb-3 input-icon-wrapper"><i class="bi bi-person"></i><input type="text" class="form-control form-control-sm" id="formAdminUser" placeholder="Username" /></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-key"></i><input type="password" class="form-control form-control-sm" id="formAdminPass" placeholder="Password (Kosongi jk tdk ubah)" /></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-person-badge"></i><input type="text" class="form-control form-control-sm" id="formAdminNama" placeholder="Nama Lengkap Admin" /></div><div class="mb-3"><select class="form-select form-select-sm" id="formAdminRole"><option value="Admin Biasa">Admin Biasa</option><option value="SuperAdmin">SuperAdmin</option></select></div><hr /><div id="privilege-area" class="small"><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-dashboard" checked /><label class="form-check-label ms-2" for="cb-dashboard">Dashboard</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-absen" checked /><label class="form-check-label ms-2" for="cb-absen">Absensi</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-siswa" checked /><label class="form-check-label ms-2" for="cb-siswa">Data Siswa</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-tarif" /><label class="form-check-label ms-2" for="cb-tarif">Pengaturan Tarif</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-log" checked /><label class="form-check-label ms-2" for="cb-log">Log Kehadiran</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-laporan" checked /><label class="form-check-label ms-2" for="cb-laporan">Laporan</label></div><div class="form-check form-switch"><input class="form-check-input role-cb" type="checkbox" id="cb-role" /><label class="form-check-label ms-2" for="cb-role">Manajemen Role</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary btn-sm w-100" onclick="simpanAdminKeAPI()">Simpan Pengaturan</button></div></div></div></div>
 
     <div class="modal fade" id="modalTemplateWA" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-whatsapp text-success"></i> Edit Template Pesan WA</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2"><strong>Gunakan kode berikut (akan diganti otomatis):</strong><br/><code class="user-select-all">[NAMA_WALI]</code>, <code class="user-select-all">[NAMA_SISWA]</code>, <code class="user-select-all">[BULAN]</code>, <code class="user-select-all">[TOTAL_SESI]</code>, <code class="user-select-all">[REGULER]</code>, <code class="user-select-all">[OVERTIME]</code>, <code class="user-select-all">[GRAND_TOTAL]</code>, <code class="user-select-all">[LINK]</code></div><textarea id="waTemplateInput" class="form-control" rows="12" style="font-size: 13px;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-success w-100" onclick="simpanTemplateWA()">Simpan Template WA</button></div></div></div></div>
 
+    <!-- PERBAIKAN: Modal Custom Invoice -->
     <div class="modal fade" id="modalTemplateStruk" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-image text-info"></i> Edit Catatan Struk Tagihan</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2">Catatan ini akan muncul di bagian paling bawah pada gambar Struk Tagihan yang dibagikan.</div><textarea id="strukTemplateInput" class="form-control" rows="4" style="font-size: 13px; text-align:center;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-info text-white w-100" onclick="simpanTemplateStruk()">Simpan Teks Struk</button></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -546,10 +547,11 @@
       let lastScanValue = "";
       let lastScanTime = 0;
 
-      let waTemplate = localStorage.getItem('waTemplate') || `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Jam Tambahan: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\nMohon kesediaannya menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
+      let waTemplate = localStorage.getItem('waTemplate') || `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Overtime: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\nMohon kesediaannya menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
       
       let strukTemplateNote = localStorage.getItem('strukTemplateNote') || `Terima kasih atas kepercayaan Anda! ✨\nDicetak otomatis oleh Sistem Bimbel Bee.`;
 
+      // PERBAIKAN: Fungsi konversi angka bulan "YYYY-MM" menjadi Teks "NamaBulan Tahun"
       function formatBulanIndo(yyyy_mm) {
           if(!yyyy_mm) return "";
           const p = yyyy_mm.split('-');
@@ -558,27 +560,11 @@
           return `${mNames[parseInt(p[1])-1]} ${p[0]}`;
       }
 
-      function togglePasswordVisibility(inputId, iconEl) {
-        const input = document.getElementById(inputId);
-        if (input.type === "password") {
-          input.type = "text";
-          iconEl.classList.remove("bi-eye-slash");
-          iconEl.classList.add("bi-eye");
-        } else {
-          input.type = "password";
-          iconEl.classList.remove("bi-eye");
-          iconEl.classList.add("bi-eye-slash");
-        }
-      }
-
       window.onload = async function () {
-        // PERBAIKAN: Cara memanggil Icon Tema yang Anti Gagal
-        const currentSavedTheme = localStorage.getItem('theme') || 'light';
-        const iconClass = currentSavedTheme === "light" ? "bi bi-moon-fill" : "bi bi-sun-fill";
-        const btn1 = document.querySelector("#themeToggleBtn i");
-        if (btn1) btn1.className = iconClass;
-        const btn2 = document.querySelector("#themeToggleBtnWali i");
-        if (btn2) btn2.className = iconClass;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const iconClass = savedTheme === "light" ? "bi bi-moon-fill" : "bi bi-sun-fill";
+        document.querySelector("#themeToggleBtn i").className = iconClass;
+        document.querySelector("#themeToggleBtnWali i").className = iconClass + " text-secondary";
 
         initUIComponents();
         await loadDataFromAPI();
@@ -725,10 +711,8 @@
             const siswaAuto = dataSiswa.find(s => s.id === autoId);
             if (siswaAuto) {
                 const { value: pin } = await Swal.fire({ 
-                  title: "Masukkan PIN Keamanan", 
-                  html: `<div class="mt-2 text-start"><label class="form-label small text-muted">Verifikasi PIN Anak Anda (${siswaAuto.nama})</label><div class="position-relative"><input id="swal-pin" type="password" class="form-control text-center fs-4" style="letter-spacing: 0.5rem;" placeholder="****" maxlength="4" autocomplete="off" onkeydown="if(event.key==='Enter'){Swal.clickConfirm();}"><i class="bi bi-eye-slash position-absolute top-50 translate-middle-y end-0 me-3 toggle-pw" style="font-size:1.2rem; z-index:10;" onclick="const i=document.getElementById('swal-pin'); if(i.type==='password'){i.type='text'; this.classList.replace('bi-eye-slash','bi-eye');}else{i.type='password'; this.classList.replace('bi-eye','bi-eye-slash');}"></i></div></div>`,
-                  showCancelButton: true,
-                  preConfirm: () => { return document.getElementById('swal-pin').value; }
+                  title: "Masukkan PIN Keamanan", input: "password", inputLabel: `Verifikasi PIN Anak Anda (${siswaAuto.nama})`, inputPlaceholder: "Masukkan PIN", inputAttributes: { maxlength: 4, autocapitalize: "off", autocorrect: "off" }, showCancelButton: true,
+                  didOpen: () => { const inputSwal = Swal.getInput(); if(inputSwal) { inputSwal.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } }); } }
                 });
                 if (!pin) return; 
                 if (pin !== siswaAuto.pin) return Swal.fire("Akses Ditolak", "PIN yang Anda masukkan salah!", "error");
@@ -769,7 +753,7 @@
         document.getElementById("stat-pemasukan").innerText = "Rp " + (estPemasukan / 1000).toLocaleString('id-ID') + "K";
 
         const tbodyAktivitas = document.getElementById("body-aktivitas-terakhir");
-        const lastLogs = [...filteredLogs].sort((a,b) => b.idLog.localeCompare(a.idLog)).slice(0, 10);
+        const lastLogs = [...filteredLogs].sort((a,b) => b.idLog.localeCompare(a.idLog)).slice(0, 3);
         let htmlStr = "";
         lastLogs.forEach(l => {
            const siswa = dataSiswa.find(s => s.id === l.idSiswa);
@@ -812,18 +796,19 @@
         tbody.innerHTML = htmlStr;
       }
 
+      // PERBAIKAN: Group Tarif dengan Flex-Wrap End agar proporsional dan tidak terpotong
       function renderTabelTarif() {
         const tbody = document.getElementById("body-tabel-tarif");
         let htmlStr = "";
         dataTarif.forEach((t, index) => {
-          const jenjangHtml = t.jenjang.split(', ').map(j => `<span class="badge bg-secondary fw-normal mb-1 me-1">${j}</span>`).join('');
-          const hariHtml = t.hari.split(', ').map(h => `<span class="badge bg-light text-dark border fw-normal mb-1 me-1">${h}</span>`).join('');
+          const jenjangHtml = t.jenjang.split(', ').map(j => `<span class="badge bg-secondary fw-normal">${j}</span>`).join('');
+          const hariHtml = t.hari.split(', ').map(h => `<span class="badge bg-light text-dark border fw-normal">${h}</span>`).join('');
           htmlStr += `<tr>
           <td data-label="Nama Grup" class="fw-bold text-primary">${t.nama}</td>
-          <td data-label="Jenjang Berlaku"><div class="d-flex flex-wrap justify-content-end">${jenjangHtml}</div></td>
-          <td data-label="Hari Berlaku"><div class="d-flex flex-wrap justify-content-end">${hariHtml}</div></td>
+          <td data-label="Jenjang Berlaku"><div class="d-flex flex-wrap justify-content-end gap-1">${jenjangHtml}</div></td>
+          <td data-label="Hari Berlaku"><div class="d-flex flex-wrap justify-content-end gap-1">${hariHtml}</div></td>
           <td data-label="Tarif Reguler">Rp ${t.reg.toLocaleString("id-ID")}</td>
-          <td data-label="Tarif Jam Tambahan">Rp ${t.over.toLocaleString("id-ID")}</td>
+          <td data-label="Tarif Overtime">Rp ${t.over.toLocaleString("id-ID")}</td>
           <td data-label="Aksi">
             <div class="d-flex gap-1 flex-wrap justify-content-end">
               <button class="btn btn-sm btn-outline-secondary" onclick="editTarif(${index})"><i class="bi bi-pencil"></i></button> 
@@ -872,63 +857,24 @@
         const tbody = document.getElementById("body-tabel-log");
         let htmlStr = "";
         
-        let grouped = {};
         dataLog.filter((l) => l.nama.toLowerCase().includes(srcName) && l.bulan === bln).forEach((l) => {
-            if (!grouped[l.idSiswa]) grouped[l.idSiswa] = { nama: l.nama, logs: [] };
-            grouped[l.idSiswa].logs.push(l);
+            let b = l.status === "Hadir" ? "success" : "warning";
+            let tglPart = l.tgl.split(' ');
+            let tglSaja = tglPart.slice(0, 3).join(' '); 
+            let jamSaja = tglPart[3] || '';
+
+            htmlStr += `<tr>
+              <td data-label="Hari & Waktu"><div><span class="fw-bold">${l.hari}</span>, ${tglSaja}</div><small class="text-muted fw-normal">${jamSaja} WIB</small></td>
+              <td data-label="Nama Siswa" class="fw-bold text-primary">${l.nama}</td>
+              <td data-label="Status"><span class="badge bg-${b}">${l.status}</span></td>
+              <td data-label="Trf Reguler" class="editable-cell text-primary" contenteditable="true" onblur="updateLogHarga(this, 'reg', '${l.idLog}')">Rp ${l.reg.toLocaleString("id-ID")}</td>
+              <td data-label="Trf Overtime" class="editable-cell text-primary" contenteditable="true" onblur="updateLogHarga(this, 'over', '${l.idLog}')">Rp ${l.over.toLocaleString("id-ID")}</td>
+              <td data-label="Aksi">
+                 <div class="d-flex justify-content-end"><button class="btn btn-sm btn-outline-danger" onclick="hapusData('Log', '${l.idLog}')"><i class="bi bi-trash"></i></button></div>
+              </td>
+            </tr>`;
         });
-
-        Object.keys(grouped).forEach((k) => {
-          let g = grouped[k];
-          let idRow = "log-det-" + k;
-          let detailHtml = "";
-          
-          g.logs.forEach(l => {
-              let b = l.status === "Hadir" ? "success" : "warning";
-              let tglPart = l.tgl.split(' ');
-              let tglSaja = tglPart.slice(0, 3).join(' ');
-              let jamSaja = tglPart[3] || '';
-              
-              detailHtml += `
-              <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle py-2">
-                  <div class="text-start">
-                      <div class="fw-bold" style="font-size:0.85rem;">${l.hari}, ${tglSaja}</div>
-                      <small class="text-muted">${jamSaja} WIB</small>
-                  </div>
-                  <div class="text-end">
-                      <span class="badge bg-${b} mb-1">${l.status}</span><br>
-                      <div class="d-flex gap-2 justify-content-end align-items-center flex-wrap mt-1">
-                          <div><small class="text-muted">Reg:</small> <span class="editable-cell text-primary fw-bold" contenteditable="true" onblur="updateLogHarga(this, 'reg', '${l.idLog}')" style="font-size:0.85rem;">Rp ${l.reg.toLocaleString("id-ID")}</span></div>
-                          <div><small class="text-muted ms-1">Jam Tamb.:</small> <span class="editable-cell text-primary fw-bold" contenteditable="true" onblur="updateLogHarga(this, 'over', '${l.idLog}')" style="font-size:0.85rem;">Rp ${l.over.toLocaleString("id-ID")}</span></div>
-                          <button class="btn btn-sm btn-outline-danger ms-1 py-0 px-1" onclick="hapusData('Log', '${l.idLog}')"><i class="bi bi-trash"></i></button>
-                      </div>
-                  </div>
-              </div>`;
-          });
-
-          htmlStr += `
-          <tr>
-            <td data-label="Nama Siswa"><div class="fw-bold text-primary">${g.nama}</div><small class="text-muted">${k}</small></td>
-            <td data-label="Total Kehadiran"><span class="badge bg-info text-white">${g.logs.length} Sesi</span></td>
-            <td data-label="Aksi">
-              <div class="d-flex gap-1 flex-wrap justify-content-end">
-                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#${idRow}"><i class="bi bi-chevron-down"></i> Rincian</button>
-              </div>
-            </td>
-          </tr>
-          <tr id="${idRow}" class="collapse bg-transparent">
-            <td colspan="3" class="p-0 border-0">
-              <div class="card card-body border-0 p-3 shadow-sm rounded-3 mt-2" style="background-color: var(--bg-color);">
-                <small class="fw-bold mb-2 text-primary border-bottom pb-2"><i class="bi bi-list-check"></i> Rincian Presensi & Tarif</small>
-                <div class="rincian-list">
-                    ${detailHtml}
-                </div>
-              </div>
-            </td>
-          </tr>`;
-        });
-
-        if(htmlStr === "") htmlStr = `<tr><td colspan="3" class="text-center text-muted">Tidak ada data kehadiran pada bulan ini.</td></tr>`;
+        if(htmlStr === "") htmlStr = `<tr><td colspan="6" class="text-center text-muted">Tidak ada data kehadiran pada bulan ini.</td></tr>`;
         tbody.innerHTML = htmlStr;
       }
 
@@ -947,6 +893,7 @@
         Swal.fire({ toast: true, position: "top-end", icon: "success", title: "Nominal diperbarui di Database!", showConfirmButton: false, timer: 1500 });
       }
 
+      // === PENCATATAN ABSENSI (SCAN & MANUAL) ===
       async function catatKehadiran(identifier, method, tipeManual = null) {
         let siswa = null;
         if(method === 'Scanner') siswa = dataSiswa.find(s => s.id === identifier);
@@ -1012,6 +959,7 @@
           catatKehadiran(manualSiswa, 'Manual', manualTipe);
       }
 
+      // --- ADMIN CRUD ---
       function bukaModalRole(user, role, isNew = false) {
         if (isNew) { 
           editAdminOldUser = null;
@@ -1057,6 +1005,7 @@
          refreshAllUI(); simpanLaluTutup('modalRole', 'Data Akun Admin');
       }
 
+      // --- SISWA CRUD ---
       function bukaModalSiswa(id = null) { 
         editSiswaId = id; 
         const modalTitle = document.querySelector("#modalSiswa .modal-title");
@@ -1112,6 +1061,7 @@
          refreshAllUI(); simpanLaluTutup('modalSiswa', 'Data Siswa Terkirim ke DB');
       }
 
+      // --- TARIF CRUD ---
       function openTarifModal() {
         editTarifOldNama = null;
         document.querySelector("#modalTarif .modal-title").innerText = "Tambah Grup Tarif Otomatis";
@@ -1195,6 +1145,7 @@
           let btnLunasIcon = isLunas ? 'bi-x-circle' : 'bi-check-circle';
           let btnLunasText = isLunas ? 'Batal Lunas' : 'Set Lunas';
 
+          // PERBAIKAN: Flex List Detail Anti Mengsle
           g.details.forEach((d) => {
             let typeClass = d.status === "Hadir" ? "text-success" : "text-warning fw-bold";
             let tglPart = d.tgl.split(' ');
@@ -1218,7 +1169,7 @@
           <tr>
             <td data-label="Nama Siswa"><div class="fw-bold text-primary">${g.nama}</div><small class="text-muted">${k}</small></td>
             <td data-label="Total Reguler">Rp ${g.reg.toLocaleString("id-ID")}</td>
-            <td data-label="Total Jam Tambahan">Rp ${g.over.toLocaleString("id-ID")}</td>
+            <td data-label="Total Overtime">Rp ${g.over.toLocaleString("id-ID")}</td>
             <td data-label="Tagihan Total" class="fw-bold text-danger">Rp ${tot.toLocaleString("id-ID")}</td>
             <td data-label="Status">${statusBadge}</td>
             <td data-label="Aksi">
@@ -1231,7 +1182,7 @@
             </td>
           </tr>
           <tr id="${idRow}" class="collapse bg-transparent">
-            <td colspan="6" class="p-0 border-0">
+            <td colspan="6">
               <div class="card card-body border-0 p-3 shadow-sm rounded-3 mt-2" style="background-color: var(--bg-color);">
                 <small class="fw-bold mb-2 text-primary border-bottom pb-2"><i class="bi bi-list-check"></i> Rincian Sesi Kehadiran</small>
                 <div class="rincian-list">
@@ -1264,7 +1215,36 @@
         if (!document.getElementById("pw-detail-view").classList.contains("d-none")) renderDataWali();
       }
 
-      // PERBAIKAN MASTER: Fitur Bagikan Gambar Struk ke WA (Menggunakan html2canvas & Native Share)
+      function cetakInvoice(idSiswa) {
+        const bln = document.getElementById("searchLapBulan").value;
+        const namaBulan = formatBulanIndo(bln);
+        const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
+        const siswa = dataSiswa.find(s => s.id === idSiswa);
+        if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tagihan tidak ditemukan", "error");
+
+        let totalReg = 0, totalOver = 0, detailHtml = '';
+        logs.forEach(l => {
+          totalReg += l.reg; totalOver += l.over;
+          let tar = l.status === "Hadir" ? l.reg : l.over;
+          let tglParts = l.tgl.split(' '); 
+          let tglSaja = tglParts.slice(0, 3).join(' '); 
+          let jamSaja = tglParts[3] || '';
+          detailHtml += `<tr><td><div style="font-weight: 600;">${l.hari}, ${tglSaja}</div><div style="color: #64748b; font-size: 9px; margin-top: 2px;">Pukul ${jamSaja} WIB</div></td><td>${l.status}</td><td class="text-right">Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
+        });
+        let grandTotal = totalReg + totalOver;
+        let tglCetak = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        
+        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
+        let statusTagihanHtml = isLunas 
+            ? `<div style="margin-top: 10px; color: #10b981; font-weight: bold; font-size: 16px; border: 2px solid #10b981; padding: 5px; text-align: center; border-radius: 5px;">LUNAS</div>` 
+            : `<div style="margin-top: 10px; color: #ef4444; font-weight: bold; font-size: 16px; border: 2px solid #ef4444; padding: 5px; text-align: center; border-radius: 5px;">BELUM LUNAS</div>`;
+
+        const strukNoteHtml = strukTemplateNote.replace(/\n/g, '<br>');
+
+        const invoiceHTML = `<html><head><title>Invoice - ${siswa.nama}</title><style>@page { size: A5 portrait; margin: 15mm; } body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #333; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .invoice-box { max-width: 100%; margin: auto; } .header-table { width: 100%; margin-bottom: 20px; border-bottom: 2px solid #0084ff; padding-bottom: 10px; } .header-table td { vertical-align: top; } .title { font-size: 20px; font-weight: bold; color: #0084ff; letter-spacing: 1px; } .subtitle { font-size: 10px; color: #64748b; } .info-table { width: 100%; margin-bottom: 20px; font-size: 11px; } .info-table td { padding: 3px 0; vertical-align: top; } .info-table td:nth-child(1) { width: 80px; font-weight: bold; color: #555; } .info-table td:nth-child(2) { width: 15px; text-align: center; } .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; } .data-table th, .data-table td { padding: 6px 8px; border-bottom: 1px solid #eee; } .data-table th { background: #f8fafd; font-weight: bold; text-align: left; color: #444; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; } .text-right { text-align: right; } .total-section { float: right; width: 220px; font-size: 11px; } .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; } .grand-total { font-weight: bold; font-size: 14px; color: #ef4444; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; } .footer { text-align: center; margin-top: 50px; clear: both; font-size: 9px; color: #888; border-top: 1px solid #eee; padding-top: 10px;}</style></head><body onload="setTimeout(() => { window.print(); window.close(); }, 500)"><div class="invoice-box"><table class="header-table"><tr><td><div class="title">INVOICE TAGIHAN</div><div class="subtitle">Bimbel Bee</div></td><td class="text-right" style="font-size: 10px;"><strong>Periode:</strong> ${namaBulan}<br><strong>Tanggal Cetak:</strong> ${tglCetak}</td></tr></table><table style="width: 100%; margin-bottom: 15px;"><tr><td style="width: 55%; vertical-align: top;"><table class="info-table"><tr><td>Nama Siswa</td><td>:</td><td>${siswa.nama}</td></tr><tr><td>ID Siswa</td><td>:</td><td>${siswa.id}</td></tr><tr><td>Jenjang</td><td>:</td><td>${siswa.jenjang}</td></tr></table></td><td style="width: 45%; vertical-align: top;"><table class="info-table"><tr><td>Nama Wali</td><td>:</td><td>${siswa.wali}</td></tr><tr><td>No. HP (WA)</td><td>:</td><td>${siswa.hp}</td></tr></table></td></tr></table><table class="data-table"><thead><tr><th>Hari, Tanggal & Waktu</th><th>Tipe Kehadiran</th><th class="text-right">Tarif Kehadiran</th></tr></thead><tbody>${detailHtml}</tbody></table><div class="total-section"><div class="total-row"><span>Total Reguler</span><span>Rp ${totalReg.toLocaleString("id-ID")}</span></div><div class="total-row"><span>Total Overtime</span><span>Rp ${totalOver.toLocaleString("id-ID")}</span></div><div class="grand-total"><span>TOTAL TAGIHAN</span><span>Rp ${grandTotal.toLocaleString("id-ID")}</span></div>${statusTagihanHtml}</div><div class="footer">${strukNoteHtml}</div></div></body></html>`;
+        const printWin = window.open("", "_blank"); printWin.document.write(invoiceHTML); printWin.document.close();
+      }
+
       async function kirimTagihanLengkap(idSiswa) {
         const bln = document.getElementById("searchLapBulan").value;
         const namaBulan = formatBulanIndo(bln);
@@ -1310,7 +1290,7 @@
                     <span style="font-weight: bold; color: #1e293b;">Rp ${totalReg.toLocaleString("id-ID")}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
-                    <span style="color: #64748b; font-size: 14px;">Total Jam Tambahan</span>
+                    <span style="color: #64748b; font-size: 14px;">Total Overtime</span>
                     <span style="font-weight: bold; color: #1e293b;">Rp ${totalOver.toLocaleString("id-ID")}</span>
                 </div>
             </div>
@@ -1328,87 +1308,47 @@
 
         Swal.fire({ title: 'Membuat Gambar Struk...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
 
-        // Render menjadi gambar
         html2canvas(receiptTemplate, { scale: 2, backgroundColor: null }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             
-            canvas.toBlob((blob) => {
+            canvas.toBlob(async (blob) => {
                 const file = new File([blob], `Invoice_BimbelBee_${siswa.nama.replace(/\s+/g, '_')}_${bln}.png`, { type: 'image/png' });
-                
-                let hpFormat = siswa.hp.replace(/\D/g, ''); 
-                if(hpFormat.startsWith("0")) hpFormat = "62" + hpFormat.substring(1);
-                const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
+                Swal.close(); 
 
-                // Memunculkan PopUp hasil Struk, dari sini User Gesture (Klik) dihitung sah oleh Browser HP
-                Swal.fire({
-                    title: 'Struk Berhasil Dibuat!',
-                    text: 'Pilih aksi untuk mengirim Struk ke Wali Murid:',
-                    imageUrl: imgData,
-                    imageWidth: 250,
-                    imageAlt: 'Preview Struk',
-                    showDenyButton: true,
-                    confirmButtonText: '<i class="bi bi-share"></i> Share Langsung',
-                    denyButtonText: '<i class="bi bi-whatsapp"></i> Buka WA',
-                    confirmButtonColor: '#0084ff',
-                    denyButtonColor: '#10b981'
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        // User klik Share (Untuk HP yang support native API)
-                        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                            try {
-                                await navigator.share({
-                                    title: 'Invoice Bimbel Bee',
-                                    text: textWA,
-                                    files: [file]
-                                });
-                            } catch (e) {
-                                // Jika error (biasanya dibatalkan user), fallback download + WA
-                                const a = document.createElement('a'); a.href = imgData; a.download = file.name; a.click();
-                                window.open(waUrl, '_blank');
-                            }
-                        } else {
-                            // Untuk PC / HP yang tidak support Native Share
-                            const a = document.createElement('a'); a.href = imgData; a.download = file.name; a.click();
-                            window.open(waUrl, '_blank');
-                        }
-                    } else if (result.isDenied) {
-                        // User klik Buka WA (Download dulu, lalu redirect)
-                        const a = document.createElement('a'); a.href = imgData; a.download = file.name; a.click();
-                        window.open(waUrl, '_blank');
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: 'Invoice Bimbel Bee',
+                            text: textWA,
+                            files: [file]
+                        });
+                    } catch (error) {
+                        fallbackDownloadGambar(imgData, file.name, textWA, siswa.hp);
                     }
-                });
+                } else {
+                    fallbackDownloadGambar(imgData, file.name, textWA, siswa.hp);
+                }
             }, 'image/png');
         });
       }
 
-      function cetakInvoice(idSiswa) {
-        const bln = document.getElementById("searchLapBulan").value;
-        const namaBulan = formatBulanIndo(bln);
-        const logs = dataLog.filter(l => l.idSiswa === idSiswa && l.bulan === bln);
-        const siswa = dataSiswa.find(s => s.id === idSiswa);
-        if(!siswa || logs.length === 0) return Swal.fire("Oops", "Data tagihan tidak ditemukan", "error");
-
-        let totalReg = 0, totalOver = 0, detailHtml = '';
-        logs.forEach(l => {
-          totalReg += l.reg; totalOver += l.over;
-          let tar = l.status === "Hadir" ? l.reg : l.over;
-          let tglParts = l.tgl.split(' '); 
-          let tglSaja = tglParts.slice(0, 3).join(' '); 
-          let jamSaja = tglParts[3] || '';
-          detailHtml += `<tr><td><div style="font-weight: 600;">${l.hari}, ${tglSaja}</div><div style="color: #64748b; font-size: 9px; margin-top: 2px;">Pukul ${jamSaja} WIB</div></td><td>${l.status}</td><td class="text-right">Rp ${tar.toLocaleString("id-ID")}</td></tr>`;
-        });
-        let grandTotal = totalReg + totalOver;
-        let tglCetak = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+      function fallbackDownloadGambar(imgData, filename, textWA, noHP) {
+        let hpFormat = noHP.replace(/\D/g, ''); if(hpFormat.startsWith("0")) hpFormat = "62" + hpFormat.substring(1);
+        const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
         
-        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
-        let statusTagihanHtml = isLunas 
-            ? `<div style="margin-top: 10px; color: #10b981; font-weight: bold; font-size: 16px; border: 2px solid #10b981; padding: 5px; text-align: center; border-radius: 5px;">LUNAS</div>` 
-            : `<div style="margin-top: 10px; color: #ef4444; font-weight: bold; font-size: 16px; border: 2px solid #ef4444; padding: 5px; text-align: center; border-radius: 5px;">BELUM LUNAS</div>`;
-
-        const strukNoteHtml = strukTemplateNote.replace(/\n/g, '<br>');
-
-        const invoiceHTML = `<html><head><title>Invoice - ${siswa.nama}</title><style>@page { size: A5 portrait; margin: 15mm; } body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #333; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .invoice-box { max-width: 100%; margin: auto; } .header-table { width: 100%; margin-bottom: 20px; border-bottom: 2px solid #0084ff; padding-bottom: 10px; } .header-table td { vertical-align: top; } .title { font-size: 20px; font-weight: bold; color: #0084ff; letter-spacing: 1px; } .subtitle { font-size: 10px; color: #64748b; } .info-table { width: 100%; margin-bottom: 20px; font-size: 11px; } .info-table td { padding: 3px 0; vertical-align: top; } .info-table td:nth-child(1) { width: 80px; font-weight: bold; color: #555; } .info-table td:nth-child(2) { width: 15px; text-align: center; } .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; } .data-table th, .data-table td { padding: 6px 8px; border-bottom: 1px solid #eee; } .data-table th { background: #f8fafd; font-weight: bold; text-align: left; color: #444; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; } .text-right { text-align: right; } .total-section { float: right; width: 220px; font-size: 11px; } .total-row { display: flex; justify-content: space-between; margin-bottom: 4px; } .grand-total { font-weight: bold; font-size: 14px; color: #ef4444; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; } .footer { text-align: center; margin-top: 50px; clear: both; font-size: 9px; color: #888; border-top: 1px solid #eee; padding-top: 10px;}</style></head><body onload="setTimeout(() => { window.print(); window.close(); }, 500)"><div class="invoice-box"><table class="header-table"><tr><td><div class="title">INVOICE TAGIHAN</div><div class="subtitle">Bimbel Bee</div></td><td class="text-right" style="font-size: 10px;"><strong>Periode:</strong> ${namaBulan}<br><strong>Tanggal Cetak:</strong> ${tglCetak}</td></tr></table><table style="width: 100%; margin-bottom: 15px;"><tr><td style="width: 55%; vertical-align: top;"><table class="info-table"><tr><td>Nama Siswa</td><td>:</td><td>${siswa.nama}</td></tr><tr><td>ID Siswa</td><td>:</td><td>${siswa.id}</td></tr><tr><td>Jenjang</td><td>:</td><td>${siswa.jenjang}</td></tr></table></td><td style="width: 45%; vertical-align: top;"><table class="info-table"><tr><td>Nama Wali</td><td>:</td><td>${siswa.wali}</td></tr><tr><td>No. HP (WA)</td><td>:</td><td>${siswa.hp}</td></tr></table></td></tr></table><table class="data-table"><thead><tr><th>Hari, Tanggal & Waktu</th><th>Tipe Kehadiran</th><th class="text-right">Tarif Kehadiran</th></tr></thead><tbody>${detailHtml}</tbody></table><div class="total-section"><div class="total-row"><span>Total Reguler</span><span>Rp ${totalReg.toLocaleString("id-ID")}</span></div><div class="total-row"><span>Total Jam Tambahan</span><span>Rp ${totalOver.toLocaleString("id-ID")}</span></div><div class="grand-total"><span>TOTAL TAGIHAN</span><span>Rp ${grandTotal.toLocaleString("id-ID")}</span></div>${statusTagihanHtml}</div><div class="footer">${strukNoteHtml}</div></div></body></html>`;
-        const printWin = window.open("", "_blank"); printWin.document.write(invoiceHTML); printWin.document.close();
+        Swal.fire({
+            title: 'Struk Selesai Dibuat',
+            text: 'Silakan Unduh Gambar Struk di bawah ini, lalu klik Buka WhatsApp.',
+            imageUrl: imgData, imageWidth: 250, imageAlt: 'Invoice Preview',
+            showDenyButton: true, confirmButtonText: '<i class="bi bi-download"></i> Unduh Struk', denyButtonText: '<i class="bi bi-whatsapp"></i> Buka WA', denyButtonColor: '#10b981'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const a = document.createElement('a'); a.href = imgData; a.download = filename;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            } else if (result.isDenied) {
+                window.open(waUrl, '_blank');
+            }
+        });
       }
 
       function kirimWA(idSiswa) {
@@ -1437,10 +1377,7 @@
             .replace(/\[LINK\]/g, simulatedWebLink);
         
         const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
-        
-        // PERBAIKAN: Langsung tembak ke link WA tanpa SetTimeout agar tidak di blokir browser
         window.open(waUrl, '_blank');
-        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Membuka WhatsApp...', showConfirmButton: false, timer: 1500 });
       }
 
       function bukaModalTemplateWA() {
@@ -1478,23 +1415,31 @@
         if (!siswa) return Swal.fire("Tidak Ditemukan", "Nama siswa tidak terdaftar.", "error");
 
         const { value: pin } = await Swal.fire({ 
-          title: "Masukkan PIN Keamanan", 
-          html: `<div class="mt-2 text-start"><label class="form-label small text-muted">Verifikasi PIN Anak Anda (${siswa.nama})</label><div class="position-relative"><input id="swal-pin" type="password" class="form-control text-center fs-4" style="letter-spacing: 0.5rem;" placeholder="****" maxlength="4" autocomplete="off" onkeydown="if(event.key==='Enter'){Swal.clickConfirm();}"><i class="bi bi-eye-slash position-absolute top-50 translate-middle-y end-0 me-3 toggle-pw" style="font-size:1.2rem; z-index:10;" onclick="const i=document.getElementById('swal-pin'); if(i.type==='password'){i.type='text'; this.classList.replace('bi-eye-slash','bi-eye');}else{i.type='password'; this.classList.replace('bi-eye','bi-eye-slash');}"></i></div></div>`,
+          title: "Masukkan PIN", 
+          input: "password", 
+          inputLabel: "PIN Siswa", 
+          inputPlaceholder: "Masukkan PIN", 
+          inputAttributes: { maxlength: 4, autocapitalize: "off", autocorrect: "off" }, 
           showCancelButton: true,
-          preConfirm: () => { return document.getElementById('swal-pin').value; }
+          didOpen: () => {
+            const inputSwal = Swal.getInput();
+            if(inputSwal) {
+              inputSwal.addEventListener('keydown', (e) => { 
+                if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
+              });
+            }
+          }
         });
         if (!pin) return; 
         if (pin !== siswa.pin) return Swal.fire("Oops", "PIN salah!", "error");
 
         document.getElementById("pw-nama").innerText = siswa.nama; document.getElementById("pw-id").innerText = siswa.id; document.getElementById("pw-jenjang").innerText = siswa.jenjang;
         document.getElementById("pw-qr").src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${siswa.id}`;
-        document.getElementById("pw-search-view").classList.add("d-none");
-        
-        const detailView = document.getElementById("pw-detail-view");
-        detailView.classList.remove("d-none");
-        detailView.classList.remove("fade-out");
-        renderDataWali(); 
-        Swal.fire({ toast: true, position: "top-end", icon: "success", title: `Selamat datang, Bpk/Ibu ${siswa.wali}!`, showConfirmButton: false, timer: 3000 });
+        await Swal.fire("Berhasil", `Selamat datang, ${siswa.nama}!`, "success");
+
+        const searchView = document.getElementById("pw-search-view"); const detailView = document.getElementById("pw-detail-view");
+        searchView.classList.add("fade-out");
+        setTimeout(() => { searchView.classList.add("d-none"); detailView.classList.remove("d-none"); detailView.classList.remove("fade-out"); renderDataWali(); }, 500);
       }
 
       function renderDataWali() {
@@ -1547,14 +1492,18 @@
           title: 'Login Admin',
           html:
             '<input id="swal-input1" class="form-control mb-3" placeholder="Username (misal: admin_master)">' +
-            '<div class="position-relative"><input id="swal-input2" type="password" class="form-control" placeholder="Password" onkeydown="if(event.key===\'Enter\'){Swal.clickConfirm();}"><i class="bi bi-eye-slash position-absolute top-50 translate-middle-y end-0 me-3" style="cursor:pointer; font-size:1.1rem; z-index:10; color:var(--text-muted);" onclick="const i=document.getElementById(\'swal-input2\'); if(i.type===\'password\'){i.type=\'text\'; this.classList.replace(\'bi-eye-slash\',\'bi-eye\');}else{i.type=\'password\'; this.classList.replace(\'bi-eye\',\'bi-eye-slash\');}"></i></div>',
+            '<input id="swal-input2" type="password" class="form-control" placeholder="Password">',
           focusConfirm: false,
           showCancelButton: true,
           confirmButtonText: 'Login',
           cancelButtonText: 'Batal',
           didOpen: () => {
             const input1 = document.getElementById('swal-input1');
+            const input2 = document.getElementById('swal-input2');
             input1.addEventListener('keydown', (e) => { 
+              if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
+            });
+            input2.addEventListener('keydown', (e) => { 
               if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
             });
           },
@@ -1620,11 +1569,17 @@
 
       function logoutAdmin() { document.getElementById("portal-admin").classList.add("d-none"); document.getElementById("portal-wali").classList.remove("d-none"); kembaliKeSearch(); }
       function toggleSidebar() { document.getElementById("sidebar").classList.toggle("show"); document.getElementById("mobileOverlay").classList.toggle("show"); }
-      
+      function toggleTheme() {
+        const html = document.documentElement; const newTheme = html.getAttribute("data-bs-theme") === "light" ? "dark" : "light"; html.setAttribute("data-bs-theme", newTheme);
+        localStorage.setItem('theme', newTheme);
+        const iconClass = newTheme === "light" ? "bi bi-moon-fill" : "bi bi-sun-fill";
+        document.querySelector("#themeToggleBtn i").className = iconClass; document.querySelector("#themeToggleBtnWali i").className = iconClass + " text-secondary";
+      }
+
       function switchMenu(menuId, element) {
         document.querySelectorAll(".menu-section").forEach((el) => el.classList.add("d-none")); document.getElementById(menuId).classList.remove("d-none");
         document.querySelectorAll("#sidebar .nav-link").forEach((el) => el.classList.remove("active")); if (element && element.classList.contains("nav-link")) element.classList.add("active");
-        const titles = { "menu-dashboard": "Dashboard", "menu-absen": "Absensi Scanner", "menu-siswa": "Data Siswa", "menu-tarif": "Pengaturan Tarif", "menu-log": "Riwayat Presensi", "menu-laporan": "Laporan & Invoice", "menu-role": "Manajemen Role" };
+        const titles = { "menu-dashboard": "Dashboard", "menu-absen": "Absensi Scanner", "menu-siswa": "Data Siswa", "menu-tarif": "Pengaturan Tarif", "menu-log": "Log Kehadiran", "menu-laporan": "Laporan & Invoice", "menu-role": "Manajemen Role" };
         document.getElementById("pageTitle").innerText = titles[menuId];
         if (window.innerWidth <= 768 && document.getElementById("sidebar").classList.contains("show")) toggleSidebar();
         if (menuId !== "menu-absen") { stopScanner(); document.getElementById("btnMulaiKamera").style.display = "inline-block"; }
