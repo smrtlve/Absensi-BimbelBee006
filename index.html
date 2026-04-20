@@ -540,7 +540,6 @@
 
     <div class="modal fade" id="modalRole" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Hak Akses / Akun</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="roleCheckboxes"><div class="mb-3 input-icon-wrapper"><i class="bi bi-person"></i><input type="text" class="form-control form-control-sm" id="formAdminUser" placeholder="Username" /></div><div class="mb-3 input-icon-wrapper position-relative"><i class="bi bi-key"></i><input type="password" class="form-control form-control-sm pe-5" id="formAdminPass" placeholder="Password (Kosongi jk tdk ubah)" /><i class="bi bi-eye-slash toggle-pw" id="toggleAdminPass" onclick="togglePassword('formAdminPass', 'toggleAdminPass')"></i></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-person-badge"></i><input type="text" class="form-control form-control-sm" id="formAdminNama" placeholder="Nama Lengkap Admin" /></div><div class="mb-3"><select class="form-select form-select-sm" id="formAdminRole"><option value="Admin Biasa">Admin Biasa</option><option value="SuperAdmin">SuperAdmin</option></select></div><hr /><div id="privilege-area" class="small"><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-dashboard" checked /><label class="form-check-label ms-2" for="cb-dashboard">Dashboard</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-absen" checked /><label class="form-check-label ms-2" for="cb-absen">Absensi</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-siswa" checked /><label class="form-check-label ms-2" for="cb-siswa">Data Siswa</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-tarif" /><label class="form-check-label ms-2" for="cb-tarif">Pengaturan Tarif</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-log" checked /><label class="form-check-label ms-2" for="cb-log">Log Kehadiran</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-laporan" checked /><label class="form-check-label ms-2" for="cb-laporan">Laporan</label></div><div class="form-check form-switch"><input class="form-check-input role-cb" type="checkbox" id="cb-role" /><label class="form-check-label ms-2" for="cb-role">Manajemen Role</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary btn-sm w-100" onclick="simpanAdminKeAPI()">Simpan Pengaturan</button></div></div></div></div>
 
-    <!-- PERBAIKAN 3.1: Pemisahan Template WA ke dalam 2 Kotak yang berbeda -->
     <div class="modal fade" id="modalTemplateWA" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-whatsapp text-success"></i> Edit Template Pesan WA</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2"><strong>Gunakan kode berikut (akan diganti otomatis):</strong><br/><code class="user-select-all">[NAMA_WALI]</code>, <code class="user-select-all">[NAMA_SISWA]</code>, <code class="user-select-all">[BULAN]</code>, <code class="user-select-all">[TOTAL_SESI]</code>, <code class="user-select-all">[REGULER]</code>, <code class="user-select-all">[JAM_TAMBAHAN]</code>, <code class="user-select-all">[GRAND_TOTAL]</code>, <code class="user-select-all">[LINK]</code></div>
       
       <label class="fw-bold text-danger small mb-1"><i class="bi bi-exclamation-circle"></i> Template Jika BELUM LUNAS</label>
@@ -572,14 +571,12 @@
       let lastScanValue = "";
       let lastScanTime = 0;
 
-      // PERBAIKAN 3.1: Logika Pemisahan 2 Jenis Template Lunas / Belum
       let waTemplateBelumLunas = localStorage.getItem('waTemplateBelumLunas') || `Halo Bpk/Ibu *[NAMA_WALI]*, semoga sehat selalu! 🙏\n\nRincian les ananda *[NAMA_SISWA]* periode *[BULAN]*:\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Reguler: Rp [REGULER]\n- Jam Tambahan: Rp [JAM_TAMBAHAN]\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran:\n[LINK]\n\nMohon kesediaannya untuk dapat menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaannya! 📖\n\nSalam,\n*Admin Bimbel Bee* 😊`;
       
       let waTemplateLunas = localStorage.getItem('waTemplateLunas') || `Halo Bpk/Ibu *[NAMA_WALI]*, semoga sehat selalu! 🙏\n\nRincian les ananda *[NAMA_SISWA]* periode *[BULAN]*:\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Reguler: Rp [REGULER]\n- Jam Tambahan: Rp [JAM_TAMBAHAN]\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran:\n[LINK]\n\nTerima kasih banyak atas *pelunasan* administrasi bulan ini. Semoga ilmu yang didapat ananda bermanfaat! ✨\n\nSalam,\n*Admin Bimbel Bee* 😊`;
       
       let strukTemplateNote = localStorage.getItem('strukTemplateNote') || `Terima kasih atas kepercayaan Anda! ✨\nDicetak otomatis oleh Sistem Bimbel Bee.`;
 
-      // Helper Password Eye Toggle
       function togglePassword(inputId, iconId) {
         const input = document.getElementById(inputId);
         const icon = document.getElementById(iconId);
@@ -661,10 +658,7 @@
                     l.reg = parseInt(l.reg) || 0; l.over = parseInt(l.over) || 0;
                     if (l.bulan && l.bulan.length > 7) { try { const d = new Date(l.bulan); if (!isNaN(d.getTime())) l.bulan = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0'); } catch(e){} }
                     if (l.tgl && l.tgl.length > 20) { try { const d = new Date(l.tgl); if (!isNaN(d.getTime())) { const mNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"]; l.tgl = `${d.getDate().toString().padStart(2, '0')} ${mNames[d.getMonth()]} ${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; } } catch(e){} }
-                    
-                    // PERBAIKAN 1: Filter mapping tampilan lama Overtime -> Jam Tambahan
                     if(l.status === "Overtime") l.status = "Jam Tambahan";
-                    
                     return l;
                  });
              } else throw new Error(json.message);
@@ -979,7 +973,6 @@
         Swal.fire({ toast: true, position: "top-end", icon: "success", title: "Nominal diperbarui di Database!", showConfirmButton: false, timer: 1500 });
       }
 
-      // === PENCATATAN ABSENSI (SCAN & MANUAL) ===
       async function catatKehadiran(identifier, method, tipeManual = null) {
         let siswa = null;
         if(method === 'Scanner') siswa = dataSiswa.find(s => s.id === identifier);
@@ -1013,7 +1006,6 @@
             bulan: curYearMonth, tglObj: curDateObj
         };
 
-        // Pastikan Data Ke Backend selalu menyimpan "Overtime" untuk kompatibilitas data lama, namun UI menyesuaikan (Opsional, saat ini pakai Jam Tambahan)
         if(newLog.status === "Jam Tambahan") newLog.status = "Overtime";
 
         dataLog.push(newLog);
@@ -1048,7 +1040,6 @@
           catatKehadiran(manualSiswa, 'Manual', manualTipe);
       }
 
-      // --- ADMIN CRUD ---
       function bukaModalRole(user, role, isNew = false) {
         if (isNew) { 
           editAdminOldUser = null;
@@ -1094,7 +1085,6 @@
          refreshAllUI(); simpanLaluTutup('modalRole', 'Data Akun Admin');
       }
 
-      // --- SISWA CRUD ---
       function bukaModalSiswa(id = null) { 
         editSiswaId = id; 
         const modalTitle = document.querySelector("#modalSiswa .modal-title");
@@ -1150,7 +1140,6 @@
          refreshAllUI(); simpanLaluTutup('modalSiswa', 'Data Siswa Terkirim ke DB');
       }
 
-      // --- TARIF CRUD ---
       function openTarifModal() {
         editTarifOldNama = null;
         document.querySelector("#modalTarif .modal-title").innerText = "Tambah Grup Tarif Otomatis";
@@ -1207,7 +1196,6 @@
          refreshAllUI(); simpanLaluTutup('modalTarif', 'Data Tarif DB');
       }
 
-      // --- LAPORAN & COMPACT INVOICE ---
       function filterLaporan() {
         const srcName = document.getElementById("searchLapName").value.toLowerCase();
         const bln = document.getElementById("searchLapBulan").value;
@@ -1363,7 +1351,6 @@
         const baseUrl = window.location.origin + window.location.pathname; 
         const simulatedWebLink = `${baseUrl}?id=${siswa.id}&bln=${bln}`;
 
-        // PERBAIKAN 3.1: Pilih template sesuai status
         let templateTerpilih = isLunas ? waTemplateLunas : waTemplateBelumLunas;
 
         let textWA = templateTerpilih
@@ -1412,7 +1399,8 @@
 
         Swal.fire({ title: 'Menyiapkan Struk...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
 
-        html2canvas(receiptTemplate, { scale: 2, backgroundColor: null }).then(canvas => {
+        // PERBAIKAN 3.2: Memberikan background warna putih solid (bukan null) agar tidak dianggap stiker oleh WhatsApp
+        html2canvas(receiptTemplate, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             
             canvas.toBlob(async (blob) => {
@@ -1423,21 +1411,29 @@
                 const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
 
                 try {
-                    // PERBAIKAN 3.2: Metode Clipboard (Sistem langsung mengkopi gambar ke Memori Keyboard)
+                    // PERBAIKAN 3.2 & 3.1: Metode Clipboard Disempurnakan
                     const clipboardItem = new window.ClipboardItem({ 'image/png': blob });
                     await navigator.clipboard.write([clipboardItem]);
                     Swal.fire({
-                        title: 'Struk Disalin!',
-                        html: '<p>Gambar struk telah <b>berhasil disalin ke Memori / Clipboard</b>.</p><p class="small text-muted">Sistem akan membuka chat WhatsApp. Silakan tekan kolom chat lalu tekan <b>Paste (Tempel)</b> untuk melampirkan gambarnya!</p>',
+                        title: 'Mengalihkan ke WhatsApp...',
+                        html: '<p>Struk berhasil disalin! Nanti di WhatsApp, <b>klik dan tahan pada kolom ketik</b> lalu pilih <b>Paste (Tempel)</b> untuk menempelkan gambar beserta pesannya.</p>',
                         icon: 'success',
-                        timer: 5000,
+                        timer: 3500,
                         showConfirmButton: false
                     }).then(() => {
                         window.open(waUrl, '_blank');
                     });
                 } catch (error) {
                     // Fallback jika browser HP lama dan tidak mendukung Copy Gambar otomatis
-                    fallbackDownloadGambar(imgData, file.name, textWA, siswa.hp);
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: 'Invoice Bimbel Bee',
+                            text: textWA,
+                            files: [file]
+                        });
+                    } else {
+                        fallbackDownloadGambar(imgData, file.name, textWA, siswa.hp);
+                    }
                 }
             }, 'image/png');
         });
@@ -1447,16 +1443,14 @@
         let hpFormat = noHP.replace(/\D/g, ''); if(hpFormat.startsWith("0")) hpFormat = "62" + hpFormat.substring(1);
         const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
         
-        // 1. Auto download file gambarnya
         const a = document.createElement('a'); a.href = imgData; a.download = filename;
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
 
-        // 2. Beri notifikasi cara melampirkan ke WA, lalu Buka WA-nya.
         Swal.fire({
-            title: 'Mengarahkan ke WhatsApp...',
-            html: '<p>Gambar struk terunduh manual.</p><p class="small text-muted">Browser perangkat Anda tidak mendukung Auto-Copy. Silakan pilih fitur <b>Kirim Gambar</b> (icon 📎) di WA, lalu pilih Struk yang baru terunduh.</p>',
+            title: 'Mengalihkan ke WhatsApp...',
+            html: '<p>Browser Anda tidak mendukung Auto-Copy. Gambar struk telah diunduh, silakan <b>lampirkan manual</b> (icon 📎) saat berada di WhatsApp.</p>',
             icon: 'info',
-            timer: 4500,
+            timer: 3500,
             showConfirmButton: false
         }).then(() => {
             window.open(waUrl, '_blank');
@@ -1481,7 +1475,6 @@
         const baseUrl = window.location.origin + window.location.pathname; 
         const simulatedWebLink = `${baseUrl}?id=${siswa.id}&bln=${bln}`;
 
-        // PERBAIKAN 3.1: Pilih template sesuai status
         let templateTerpilih = isLunas ? waTemplateLunas : waTemplateBelumLunas;
 
         let textWA = templateTerpilih
@@ -1630,13 +1623,12 @@
             const admin = dataAdmin.find(a => a.username === user && a.password === pass);
             if (!admin) {
               Swal.showValidationMessage('Username atau Password salah!');
-              return false; // Mencegah popup tertutup jika salah
+              return false;
             }
-            return admin; // Jika benar, lemparkan objek admin
+            return admin;
           }
         });
 
-        // Proses ini hanya berjalan jika kredensial terbukti benar di tahap preConfirm
         if (adminResult) {
             Swal.fire({ toast: true, position: "top-end", icon: "success", title: `Selamat datang, ${adminResult.nama}`, showConfirmButton: false, timer: 2000 });
             document.getElementById("portal-wali").classList.add("d-none"); document.getElementById("portal-admin").classList.remove("d-none");
