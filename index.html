@@ -94,12 +94,14 @@
       [data-bs-theme="dark"] .btn-themebar { background-color: var(--card-bg); color: var(--text-main); border-color: var(--border-color); }
       [data-bs-theme="dark"] .btn-themebar:hover { background-color: #334155; }
 
-      /* Form Controls - Peningkatan Jarak Padding Ikon agar tidak nabrak teks */
+      /* Form Controls - Peningkatan Jarak Padding Ikon agar tidak nabrak teks & Ikon Mata Pw */
       .form-control, .form-select { background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 0.5rem 0.75rem; }
       .form-control:focus, .form-select:focus { background-color: var(--bg-color); color: var(--text-main); border-color: var(--primary-color); box-shadow: 0 0 0 0.25rem rgba(0, 132, 255, 0.25); }
       .input-icon-wrapper { position: relative; width: 100%; }
-      .input-icon-wrapper i { position: absolute; top: 50%; transform: translateY(-50%); left: 0.85rem; color: var(--text-muted); pointer-events: none; z-index: 5; }
+      .input-icon-wrapper i:not(.toggle-pw) { position: absolute; top: 50%; transform: translateY(-50%); left: 0.85rem; color: var(--text-muted); pointer-events: none; z-index: 5; }
+      .input-icon-wrapper i.toggle-pw { left: auto; right: 0.85rem; pointer-events: auto; z-index: 10; cursor: pointer; color: var(--text-muted); position: absolute; top: 50%; transform: translateY(-50%); }
       .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.8rem !important; }
+      .input-icon-wrapper .form-control.pe-5 { padding-right: 2.8rem !important; }
       
       input[type="date"], input[type="month"], input[type="time"] { position: relative; color: var(--text-main) !important; }
       input[type="date"]::-webkit-calendar-picker-indicator, input[type="month"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: auto; height: auto; color: transparent; background: transparent; cursor: pointer; }
@@ -138,13 +140,26 @@
       .bottom-nav { display: none; }
 
       /* =========================================================================
-         PENYESUAIAN MOBILE NATIVE APP EXPERIENCE (CARD LAYOUT - NO HORIZONTAL SCROLL)
+         PENYESUAIAN MOBILE NATIVE APP EXPERIENCE
          ========================================================================= */
       @media (max-width: 768px) {
         #sidebar { transform: translateX(-100%); z-index: 1060; }
         #sidebar.show { transform: translateX(0); box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); }
         #main-content { margin-left: 0; }
-        .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background-color: var(--card-bg); border-top: 1px solid var(--border-color); z-index: 1050; justify-content: space-around; align-items: center; box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05); padding: 0 5px; }
+        
+        /* Panel Bar Transparan Elegan */
+        .bottom-nav { 
+          display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; 
+          background-color: rgba(255, 255, 255, 0.85); 
+          backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+          border-top: 1px solid rgba(0, 0, 0, 0.08); z-index: 1050; justify-content: space-around; align-items: center; 
+          box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05); padding: 0 5px; 
+        }
+        [data-bs-theme="dark"] .bottom-nav { 
+          background-color: rgba(30, 41, 59, 0.85); 
+          border-top: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+
         .nav-item-bottom { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; font-size: 0.65rem; font-weight: 600; flex: 1; transition: color 0.3s; background: none; border: none; padding: 0; }
         .nav-item-bottom.active { color: var(--primary-color); }
         .nav-item-bottom i { font-size: 1.1rem; margin-bottom: 2px; }
@@ -155,19 +170,19 @@
         
         .input-icon-wrapper .form-control, .input-icon-wrapper .form-select { padding-left: 2.8rem !important; }
 
-        /* TRANSFORMASI TABEL MENJADI MOBILE CARDS */
-        .table-responsive { overflow: visible; }
-        .table-responsive .table { border-collapse: separate; border-spacing: 0 12px; margin-top: -12px; min-width: 100%; border: none; }
+        /* TRANSFORMASI TABEL MENJADI MOBILE CARDS (Pemisahan Jelas) */
+        .table-responsive { overflow: visible; padding: 0 5px 10px 5px; } /* Ruang untuk shadow */
+        .table-responsive .table { border-collapse: separate; border-spacing: 0; margin-top: -12px; min-width: 100%; border: none; }
         .table-responsive thead { display: none; }
         
         .table-responsive tbody tr {
             display: block;
-            background: var(--card-bg);
+            background: var(--bg-color); /* Kontras agar tampak terpisah dari wadah custom-card */
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            padding: 0.5rem;
-            margin-bottom: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important; /* Shadow diperkuat */
+            padding: 0.75rem;
+            margin-bottom: 1.25rem !important; /* Jarak antar siswa diperlebar */
         }
         
         .table-responsive tbody td {
@@ -202,19 +217,19 @@
         }
         
         .table-responsive tbody td > div, .table-responsive tbody td > button, .table-responsive tbody td > small { text-align: right; }
-        .table-responsive tbody td .d-flex { justify-content: flex-end; width: 100%; gap: 0.3rem !important; flex-wrap: wrap; }
+        .table-responsive tbody td .d-flex { justify-content: flex-end; width: 100%; flex-wrap: wrap; }
 
         /* Pengecualian Dashboard & Log Scanner (Sederhana) */
         #menu-dashboard .table-responsive .table, #menu-absen .table-responsive .table { border-spacing: 0; margin-top: 0; }
-        #menu-dashboard .table-responsive tbody tr, #menu-absen .table-responsive tbody tr { display: flex; justify-content: space-between; align-items: center; border-radius: 8px; padding: 0.6rem; margin-bottom: 0.5rem; box-shadow: none; border: 1px solid var(--border-color); }
+        #menu-dashboard .table-responsive tbody tr, #menu-absen .table-responsive tbody tr { display: flex; justify-content: space-between; align-items: center; border-radius: 8px; padding: 0.6rem; margin-bottom: 0.5rem !important; box-shadow: none !important; border: 1px solid var(--border-color); }
         #menu-dashboard .table-responsive tbody td, #menu-absen .table-responsive tbody td { display: block; border: none !important; padding: 0 !important; text-align: left; width: auto; }
         #menu-dashboard .table-responsive tbody td::before, #menu-absen .table-responsive tbody td::before { display: none; }
         #menu-dashboard .table-responsive tbody td:last-child, #menu-absen .table-responsive tbody td:last-child { text-align: right; }
 
-        /* PERBAIKAN MASTER: Mencegah Rincian Invoice (Nested Table) ikutan tergencet layout card mobile */
+        /* PERBAIKAN MASTER: Mencegah Rincian Invoice & Log (Nested Table) ikutan tergencet layout card mobile */
         .table-responsive tbody tr.collapse.show { display: block; }
         .table-responsive tbody tr.collapse:not(.show) { display: none !important; }
-        .table-responsive tbody tr.collapse { border: none; background: transparent; box-shadow: none; padding: 0; margin: 0; margin-top: -10px; }
+        .table-responsive tbody tr.collapse { border: none; background: transparent; box-shadow: none !important; padding: 0; margin: 0; margin-top: -1.25rem !important; margin-bottom: 1.25rem !important; }
         
         /* Hilangkan display flex & width 35% pseudo dari TD pembungkus rincian collapse */
         .table-responsive tbody tr.collapse td { 
@@ -246,7 +261,7 @@
     <div id="api-loader">
         <div class="loader-spinner"></div>
         <h5 class="fw-bold m-0">Menyinkronkan Database...</h5>
-        <p class="text-muted small">Menghubungkan Vercel & Google Sheets</p>
+        <p class="text-muted small">Menghubungkan Server & Spreadsheet</p>
     </div>
 
     <datalist id="listSiswaSuggestion"></datalist>
@@ -447,7 +462,7 @@
             <div class="custom-card">
               <div class="card-header-custom">Riwayat Presensi & Nominal Lembur</div>
               <div class="p-3 border-bottom"><div class="row g-2"><div class="col-md-6"><div class="input-icon-wrapper"><i class="bi bi-search"></i><input type="text" id="searchLogName" list="listSiswaSuggestion" class="form-control" placeholder="Cari Nama Siswa..." oninput="filterLog()" /></div></div><div class="col-md-6"><div class="input-icon-wrapper"><i class="bi bi-calendar-month"></i><input type="month" id="searchLogBulan" class="form-control" onchange="filterLog()" /></div></div></div></div>
-              <div class="table-responsive"><table class="table table-hover" id="tabelLog"><thead><tr><th>Hari & Waktu</th><th>Nama Siswa</th><th>Status</th><th>Tarif Reguler (Edit)</th><th>Tarif Overtime (Edit)</th><th>Aksi</th></tr></thead><tbody id="body-tabel-log"></tbody></table></div>
+              <div class="table-responsive"><table class="table table-hover" id="tabelLog"><thead><tr><th>Nama Siswa</th><th>Total Sesi</th><th>Total Reguler</th><th>Total Overtime</th><th>Aksi</th></tr></thead><tbody id="body-tabel-log"></tbody></table></div>
             </div>
           </div>
 
@@ -516,14 +531,15 @@
       <hr class="text-muted opacity-25">
       <div class="input-icon-wrapper mb-3"><i class="bi bi-people"></i><input type="text" class="form-control" id="formWali" placeholder="Nama Lengkap Wali" /></div>
       <div class="mb-3 ps-1"><label class="form-label small fw-bold text-muted mb-1">Jenis Kelamin Wali</label><div class="d-flex gap-3"><div class="form-check"><input class="form-check-input" type="radio" name="genderWali" id="waliL" value="L" checked><label class="form-check-label" for="waliL">Laki-laki</label></div><div class="form-check"><input class="form-check-input" type="radio" name="genderWali" id="waliP" value="P"><label class="form-check-label" for="waliP">Perempuan</label></div></div></div>
-      <div class="input-icon-wrapper mb-3"><i class="bi bi-whatsapp"></i><input type="text" class="form-control" id="formHP" placeholder="No WA Wali (0812...)" /></div><div class="input-icon-wrapper"><i class="bi bi-key"></i><input type="password" class="form-control" id="formPin" placeholder="PIN Akses Wali (Angka)" /></div><small class="text-muted ms-2">PIN digunakan wali untuk melihat rincian di Portal Wali</small>
+      <div class="input-icon-wrapper mb-3"><i class="bi bi-whatsapp"></i><input type="text" class="form-control" id="formHP" placeholder="No WA Wali (0812...)" /></div>
+      <div class="input-icon-wrapper position-relative"><i class="bi bi-key"></i><input type="password" class="form-control pe-5" id="formPin" placeholder="PIN Akses Wali (Angka)" /><i class="bi bi-eye-slash toggle-pw" id="togglePin" onclick="togglePassword('formPin', 'togglePin')"></i></div><small class="text-muted ms-2">PIN digunakan wali untuk melihat rincian di Portal Wali</small>
     </div><div class="modal-footer"><button type="button" class="btn btn-primary w-100" onclick="simpanSiswaBaruKeAPI()">Simpan Data</button></div></div></div></div>
 
     <div class="modal fade" id="modalTarif" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Form Grup Tarif Otomatis</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="input-icon-wrapper mb-3"><i class="bi bi-tag"></i><input type="text" class="form-control" id="tarifNama" placeholder="Nama Grup Tarif" /></div><label class="form-label small fw-bold">Jenjang Berlaku (Pilih >= 1)</label><div class="dropdown mb-3"><button class="form-select text-start" type="button" data-bs-toggle="dropdown" id="btnDropdownJenjang">Pilih Jenjang...</button><ul class="dropdown-menu w-100 dropdown-menu-checkboxes shadow" id="listJenjangDiv" onclick="event.stopPropagation()"></ul></div><div class="input-icon-wrapper mb-3 d-none" id="inputJenjangTarifLainnyaWrapper"><i class="bi bi-pencil"></i><input type="text" class="form-control" id="inputJenjangTarifLainnya" placeholder="Ketik Jenjang Lainnya (Bisa dipisah koma)..." /></div><label class="form-label small fw-bold">Hari Berlaku (Otomatis deteksi hari absen)</label><div class="dropdown mb-3"><button class="form-select text-start" type="button" data-bs-toggle="dropdown" id="btnDropdownHari">Pilih Hari...</button><ul class="dropdown-menu w-100 dropdown-menu-checkboxes shadow" id="listHariDiv" onclick="event.stopPropagation()"><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Senin" id="hr1" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr1">Senin</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Selasa" id="hr2" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr2">Selasa</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Rabu" id="hr3" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr3">Rabu</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Kamis" id="hr4" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr4">Kamis</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Jumat" id="hr5" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr5">Jumat</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Sabtu" id="hr6" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr6">Sabtu</label></div></li><li><div class="form-check"><input class="form-check-input" type="checkbox" value="Minggu" id="hr7" onchange="updateBtnText('listHariDiv', 'btnDropdownHari', 'Pilih Hari...')"><label class="form-check-label w-100" for="hr7">Minggu</label></div></li></ul></div><div class="row"><div class="col-6"><label class="form-label small fw-bold">Tarif Reguler</label><div class="input-icon-wrapper"><i class="bi bi-cash"></i><input type="number" class="form-control" id="tarifReg" value="0" /></div></div><div class="col-6"><label class="form-label small fw-bold">Tarif Overtime</label><div class="input-icon-wrapper"><i class="bi bi-cash-stack"></i><input type="number" class="form-control" id="tarifOver" value="0" /></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary w-100" onclick="simpanTarifKeAPI()">Simpan Tarif</button></div></div></div></div>
 
-    <div class="modal fade" id="modalRole" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Hak Akses / Akun</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="roleCheckboxes"><div class="mb-3 input-icon-wrapper"><i class="bi bi-person"></i><input type="text" class="form-control form-control-sm" id="formAdminUser" placeholder="Username" /></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-key"></i><input type="password" class="form-control form-control-sm" id="formAdminPass" placeholder="Password (Kosongi jk tdk ubah)" /></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-person-badge"></i><input type="text" class="form-control form-control-sm" id="formAdminNama" placeholder="Nama Lengkap Admin" /></div><div class="mb-3"><select class="form-select form-select-sm" id="formAdminRole"><option value="Admin Biasa">Admin Biasa</option><option value="SuperAdmin">SuperAdmin</option></select></div><hr /><div id="privilege-area" class="small"><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-dashboard" checked /><label class="form-check-label ms-2" for="cb-dashboard">Dashboard</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-absen" checked /><label class="form-check-label ms-2" for="cb-absen">Absensi</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-siswa" checked /><label class="form-check-label ms-2" for="cb-siswa">Data Siswa</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-tarif" /><label class="form-check-label ms-2" for="cb-tarif">Pengaturan Tarif</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-log" checked /><label class="form-check-label ms-2" for="cb-log">Log Kehadiran</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-laporan" checked /><label class="form-check-label ms-2" for="cb-laporan">Laporan</label></div><div class="form-check form-switch"><input class="form-check-input role-cb" type="checkbox" id="cb-role" /><label class="form-check-label ms-2" for="cb-role">Manajemen Role</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary btn-sm w-100" onclick="simpanAdminKeAPI()">Simpan Pengaturan</button></div></div></div></div>
+    <div class="modal fade" id="modalRole" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold">Hak Akses / Akun</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="roleCheckboxes"><div class="mb-3 input-icon-wrapper"><i class="bi bi-person"></i><input type="text" class="form-control form-control-sm" id="formAdminUser" placeholder="Username" /></div><div class="mb-3 input-icon-wrapper position-relative"><i class="bi bi-key"></i><input type="password" class="form-control form-control-sm pe-5" id="formAdminPass" placeholder="Password (Kosongi jk tdk ubah)" /><i class="bi bi-eye-slash toggle-pw" id="toggleAdminPass" onclick="togglePassword('formAdminPass', 'toggleAdminPass')"></i></div><div class="mb-3 input-icon-wrapper"><i class="bi bi-person-badge"></i><input type="text" class="form-control form-control-sm" id="formAdminNama" placeholder="Nama Lengkap Admin" /></div><div class="mb-3"><select class="form-select form-select-sm" id="formAdminRole"><option value="Admin Biasa">Admin Biasa</option><option value="SuperAdmin">SuperAdmin</option></select></div><hr /><div id="privilege-area" class="small"><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-dashboard" checked /><label class="form-check-label ms-2" for="cb-dashboard">Dashboard</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-absen" checked /><label class="form-check-label ms-2" for="cb-absen">Absensi</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-siswa" checked /><label class="form-check-label ms-2" for="cb-siswa">Data Siswa</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-tarif" /><label class="form-check-label ms-2" for="cb-tarif">Pengaturan Tarif</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-log" checked /><label class="form-check-label ms-2" for="cb-log">Log Kehadiran</label></div><div class="form-check form-switch mb-2"><input class="form-check-input role-cb" type="checkbox" id="cb-laporan" checked /><label class="form-check-label ms-2" for="cb-laporan">Laporan</label></div><div class="form-check form-switch"><input class="form-check-input role-cb" type="checkbox" id="cb-role" /><label class="form-check-label ms-2" for="cb-role">Manajemen Role</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary btn-sm w-100" onclick="simpanAdminKeAPI()">Simpan Pengaturan</button></div></div></div></div>
 
-    <div class="modal fade" id="modalTemplateWA" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-whatsapp text-success"></i> Edit Template Pesan WA</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2"><strong>Gunakan kode berikut (akan diganti otomatis):</strong><br/><code class="user-select-all">[NAMA_WALI]</code>, <code class="user-select-all">[NAMA_SISWA]</code>, <code class="user-select-all">[BULAN]</code>, <code class="user-select-all">[TOTAL_SESI]</code>, <code class="user-select-all">[REGULER]</code>, <code class="user-select-all">[OVERTIME]</code>, <code class="user-select-all">[GRAND_TOTAL]</code>, <code class="user-select-all">[LINK]</code></div><textarea id="waTemplateInput" class="form-control" rows="12" style="font-size: 13px;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-success w-100" onclick="simpanTemplateWA()">Simpan Template WA</button></div></div></div></div>
+    <div class="modal fade" id="modalTemplateWA" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-whatsapp text-success"></i> Edit Template Pesan WA</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2"><strong>Gunakan kode berikut (akan diganti otomatis):</strong><br/><code class="user-select-all">[NAMA_WALI]</code>, <code class="user-select-all">[NAMA_SISWA]</code>, <code class="user-select-all">[BULAN]</code>, <code class="user-select-all">[TOTAL_SESI]</code>, <code class="user-select-all">[REGULER]</code>, <code class="user-select-all">[OVERTIME]</code>, <code class="user-select-all">[GRAND_TOTAL]</code>, <code class="user-select-all">[LINK]</code>, <code class="user-select-all">[REDAKSI_PELUNASAN]</code></div><textarea id="waTemplateInput" class="form-control" rows="12" style="font-size: 13px;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-success w-100" onclick="simpanTemplateWA()">Simpan Template WA</button></div></div></div></div>
 
     <!-- PERBAIKAN: Modal Custom Invoice -->
     <div class="modal fade" id="modalTemplateStruk" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="background-color: var(--card-bg)"><div class="modal-header border-bottom border-secondary-subtle"><h6 class="modal-title fw-bold"><i class="bi bi-image text-info"></i> Edit Catatan Struk Tagihan</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info small mb-3 border-0 py-2">Catatan ini akan muncul di bagian paling bawah pada gambar Struk Tagihan yang dibagikan.</div><textarea id="strukTemplateInput" class="form-control" rows="4" style="font-size: 13px; text-align:center;"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-info text-white w-100" onclick="simpanTemplateStruk()">Simpan Teks Struk</button></div></div></div></div>
@@ -547,11 +563,23 @@
       let lastScanValue = "";
       let lastScanTime = 0;
 
-      let waTemplate = localStorage.getItem('waTemplate') || `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Overtime: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\nMohon kesediaannya menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
+      let waTemplate = localStorage.getItem('waTemplate') || `Halo Bpk/Ibu *[NAMA_WALI]*, semoga senantiasa dalam keadaan sehat dan bahagia! 🙏\n\nKami dari *Bimbel Bee* menyampaikan rincian kehadiran dan tagihan les ananda *[NAMA_SISWA]* untuk periode *[BULAN]*.\n\n[ Rincian Belajar ]\n- Total Sesi: [TOTAL_SESI] Pertemuan\n- Nominal Reguler: Rp [REGULER]\n- Nominal Overtime: Rp [OVERTIME]\n\n*Total Tagihan: Rp [GRAND_TOTAL]*\n\nCek detail kehadiran dan unduh Invoice otomatis dengan mengklik tautan di bawah ini:\n[LINK]\n\n[REDAKSI_PELUNASAN]\n\nSalam hangat,\n*Admin Bimbel Bee* 😊`;
       
       let strukTemplateNote = localStorage.getItem('strukTemplateNote') || `Terima kasih atas kepercayaan Anda! ✨\nDicetak otomatis oleh Sistem Bimbel Bee.`;
 
-      // PERBAIKAN: Fungsi konversi angka bulan "YYYY-MM" menjadi Teks "NamaBulan Tahun"
+      // Helper Password Eye Toggle
+      function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if(input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye-slash'); icon.classList.add('bi-eye');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye'); icon.classList.add('bi-eye-slash');
+        }
+      }
+
       function formatBulanIndo(yyyy_mm) {
           if(!yyyy_mm) return "";
           const p = yyyy_mm.split('-');
@@ -711,8 +739,16 @@
             const siswaAuto = dataSiswa.find(s => s.id === autoId);
             if (siswaAuto) {
                 const { value: pin } = await Swal.fire({ 
-                  title: "Masukkan PIN Keamanan", input: "password", inputLabel: `Verifikasi PIN Anak Anda (${siswaAuto.nama})`, inputPlaceholder: "Masukkan PIN", inputAttributes: { maxlength: 4, autocapitalize: "off", autocorrect: "off" }, showCancelButton: true,
-                  didOpen: () => { const inputSwal = Swal.getInput(); if(inputSwal) { inputSwal.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } }); } }
+                  title: "Masukkan PIN Keamanan", 
+                  html: `<div class="input-icon-wrapper position-relative mx-auto" style="max-width: 250px;">
+                            <i class="bi bi-key position-absolute top-50 translate-middle-y" style="left: 15px; color: #64748b; z-index: 10;"></i>
+                            <input id="swal-pin" type="password" class="form-control ps-5 pe-5 text-center" placeholder="PIN Siswa" maxlength="4" style="height: 45px; font-size: 1.2rem; letter-spacing: 5px;">
+                            <i class="bi bi-eye-slash position-absolute top-50 translate-middle-y toggle-pw" style="right: 15px; z-index: 10; cursor:pointer;" onclick="const pw = document.getElementById('swal-pin'); if(pw.type==='password'){pw.type='text'; this.classList.replace('bi-eye-slash','bi-eye');}else{pw.type='password'; this.classList.replace('bi-eye','bi-eye-slash');}"></i>
+                         </div>`,
+                  focusConfirm: false,
+                  showCancelButton: true,
+                  preConfirm: () => document.getElementById('swal-pin').value,
+                  didOpen: () => { const inputSwal = document.getElementById('swal-pin'); if(inputSwal) { inputSwal.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } }); } }
                 });
                 if (!pin) return; 
                 if (pin !== siswaAuto.pin) return Swal.fire("Akses Ditolak", "PIN yang Anda masukkan salah!", "error");
@@ -784,7 +820,7 @@
           <td data-label="Wali & HP"><div>${s.wali} <small class="text-muted">${gWali}</small></div><small class="text-muted"><i class="bi bi-telephone"></i> ${s.hp}</small></td>
           <td data-label="Jenjang">${s.jenjang}</td>
           <td data-label="Aksi">
-            <div class="d-flex gap-1 flex-wrap justify-content-end">
+            <div class="d-flex gap-2 flex-wrap justify-content-end">
               <button class="btn btn-sm btn-outline-success" onclick="cetakIndividu('${s.id}')" title="Cetak Kartu"><i class="bi bi-printer"></i></button>
               <button class="btn btn-sm btn-outline-primary" onclick="showIDCard('${s.id}')" title="Lihat Kartu"><i class="bi bi-person-vcard"></i></button>
               <button class="btn btn-sm btn-outline-secondary" onclick="bukaModalSiswa('${s.id}')" title="Edit Data"><i class="bi bi-pencil"></i></button>
@@ -796,7 +832,6 @@
         tbody.innerHTML = htmlStr;
       }
 
-      // PERBAIKAN: Group Tarif dengan Flex-Wrap End agar proporsional dan tidak terpotong
       function renderTabelTarif() {
         const tbody = document.getElementById("body-tabel-tarif");
         let htmlStr = "";
@@ -810,7 +845,7 @@
           <td data-label="Tarif Reguler">Rp ${t.reg.toLocaleString("id-ID")}</td>
           <td data-label="Tarif Overtime">Rp ${t.over.toLocaleString("id-ID")}</td>
           <td data-label="Aksi">
-            <div class="d-flex gap-1 flex-wrap justify-content-end">
+            <div class="d-flex gap-2 flex-wrap justify-content-end">
               <button class="btn btn-sm btn-outline-secondary" onclick="editTarif(${index})"><i class="bi bi-pencil"></i></button> 
               <button class="btn btn-sm btn-outline-danger" onclick="hapusData('Tarif', '${t.nama}')"><i class="bi bi-trash"></i></button>
             </div>
@@ -830,7 +865,7 @@
             <td data-label="Nama Admin">${a.nama}</td>
             <td data-label="Role"><span class="badge bg-${badgeClass}">${a.role}</span></td>
             <td data-label="Aksi">
-              <div class="d-flex gap-1 flex-wrap justify-content-end">
+              <div class="d-flex gap-2 flex-wrap justify-content-end">
                 <button class="btn btn-sm btn-primary" onclick="bukaModalRole('${a.username}', '${a.role}')"><i class="bi bi-gear"></i> <span class="d-none d-md-inline">Privilege</span></button>
                 <button class="btn btn-sm btn-outline-danger" onclick="hapusData('Admin', '${a.username}')" ${a.role==='SuperAdmin' ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
               </div>
@@ -851,30 +886,69 @@
         });
       }
 
+      // PERBAIKAN: Accordion Grouping untuk Log Kehadiran
       function filterLog() {
         const srcName = document.getElementById("searchLogName").value.toLowerCase();
         const bln = document.getElementById("searchLogBulan").value;
         const tbody = document.getElementById("body-tabel-log");
         let htmlStr = "";
-        
-        dataLog.filter((l) => l.nama.toLowerCase().includes(srcName) && l.bulan === bln).forEach((l) => {
-            let b = l.status === "Hadir" ? "success" : "warning";
-            let tglPart = l.tgl.split(' ');
-            let tglSaja = tglPart.slice(0, 3).join(' '); 
-            let jamSaja = tglPart[3] || '';
+        let grouped = {};
 
-            htmlStr += `<tr>
-              <td data-label="Hari & Waktu"><div><span class="fw-bold">${l.hari}</span>, ${tglSaja}</div><small class="text-muted fw-normal">${jamSaja} WIB</small></td>
-              <td data-label="Nama Siswa" class="fw-bold text-primary">${l.nama}</td>
-              <td data-label="Status"><span class="badge bg-${b}">${l.status}</span></td>
-              <td data-label="Trf Reguler" class="editable-cell text-primary" contenteditable="true" onblur="updateLogHarga(this, 'reg', '${l.idLog}')">Rp ${l.reg.toLocaleString("id-ID")}</td>
-              <td data-label="Trf Overtime" class="editable-cell text-primary" contenteditable="true" onblur="updateLogHarga(this, 'over', '${l.idLog}')">Rp ${l.over.toLocaleString("id-ID")}</td>
+        dataLog.filter((l) => l.nama.toLowerCase().includes(srcName) && l.bulan === bln).forEach((l) => {
+            if (!grouped[l.idSiswa]) grouped[l.idSiswa] = { nama: l.nama, reg: 0, over: 0, details: [] };
+            grouped[l.idSiswa].reg += l.reg; grouped[l.idSiswa].over += l.over; grouped[l.idSiswa].details.push(l);
+        });
+
+        Object.keys(grouped).forEach((k) => {
+            let g = grouped[k];
+            let idRow = "logdet-" + k;
+            let detailHtml = "";
+
+            g.details.forEach(d => {
+                let b = d.status === "Hadir" ? "success" : "warning";
+                let tglPart = d.tgl.split(' ');
+                let tglSaja = tglPart.slice(0, 3).join(' ');
+                let jamSaja = tglPart[3] || '';
+
+                detailHtml += `
+                <div class="d-flex flex-column border-bottom border-secondary-subtle py-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div>
+                            <span class="fw-bold text-primary" style="font-size:0.85rem;">${d.hari}, ${tglSaja}</span> <small class="text-muted">${jamSaja} WIB</small>
+                        </div>
+                        <div>
+                            <span class="badge bg-${b}">${d.status}</span>
+                            <button class="btn btn-sm btn-outline-danger py-0 px-1 ms-2" onclick="hapusData('Log', '${d.idLog}')"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between flex-wrap gap-2 mt-1">
+                       <small class="text-muted">Tarif Reguler: <span class="editable-cell text-primary fw-bold" contenteditable="true" onblur="updateLogHarga(this, 'reg', '${d.idLog}')">Rp ${d.reg.toLocaleString("id-ID")}</span></small>
+                       <small class="text-muted">Tarif Overtime: <span class="editable-cell text-primary fw-bold" contenteditable="true" onblur="updateLogHarga(this, 'over', '${d.idLog}')">Rp ${d.over.toLocaleString("id-ID")}</span></small>
+                    </div>
+                </div>`;
+            });
+
+            htmlStr += `
+            <tr>
+              <td data-label="Nama Siswa"><div class="fw-bold text-primary">${g.nama}</div><small class="text-muted">${k}</small></td>
+              <td data-label="Total Sesi">${g.details.length} Pertemuan</td>
+              <td data-label="Total Reguler">Rp ${g.reg.toLocaleString("id-ID")}</td>
+              <td data-label="Total Overtime">Rp ${g.over.toLocaleString("id-ID")}</td>
               <td data-label="Aksi">
-                 <div class="d-flex justify-content-end"><button class="btn btn-sm btn-outline-danger" onclick="hapusData('Log', '${l.idLog}')"><i class="bi bi-trash"></i></button></div>
+                <div class="d-flex gap-2 justify-content-end"><button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#${idRow}"><i class="bi bi-chevron-down"></i> Rincian</button></div>
+              </td>
+            </tr>
+            <tr id="${idRow}" class="collapse bg-transparent">
+              <td colspan="5">
+                <div class="card card-body border-0 p-3 shadow-sm rounded-3 mt-2" style="background-color: var(--bg-color);">
+                  <small class="fw-bold mb-2 text-primary border-bottom pb-2"><i class="bi bi-clock-history"></i> Rincian & Edit Tarif per Sesi</small>
+                  ${detailHtml}
+                </div>
               </td>
             </tr>`;
         });
-        if(htmlStr === "") htmlStr = `<tr><td colspan="6" class="text-center text-muted">Tidak ada data kehadiran pada bulan ini.</td></tr>`;
+        
+        if(htmlStr === "") htmlStr = `<tr><td colspan="5" class="text-center text-muted">Tidak ada data kehadiran pada bulan ini.</td></tr>`;
         tbody.innerHTML = htmlStr;
       }
 
@@ -1145,7 +1219,6 @@
           let btnLunasIcon = isLunas ? 'bi-x-circle' : 'bi-check-circle';
           let btnLunasText = isLunas ? 'Batal Lunas' : 'Set Lunas';
 
-          // PERBAIKAN: Flex List Detail Anti Mengsle
           g.details.forEach((d) => {
             let typeClass = d.status === "Hadir" ? "text-success" : "text-warning fw-bold";
             let tglPart = d.tgl.split(' ');
@@ -1173,7 +1246,7 @@
             <td data-label="Tagihan Total" class="fw-bold text-danger">Rp ${tot.toLocaleString("id-ID")}</td>
             <td data-label="Status">${statusBadge}</td>
             <td data-label="Aksi">
-              <div class="d-flex gap-1 flex-wrap justify-content-end">
+              <div class="d-flex gap-2 flex-wrap justify-content-end">
                 <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#${idRow}"><i class="bi bi-chevron-down"></i> <span class="d-none d-md-inline">Detail</span></button>
                 <button class="btn btn-sm ${btnLunasClass}" onclick="toggleLunas('${k}', '${bln}')"><i class="bi ${btnLunasIcon}"></i> <span class="d-none d-md-inline">${btnLunasText}</span></button>
                 <button class="btn btn-sm btn-primary" onclick="kirimTagihanLengkap('${k}')" title="Kirim Gambar Struk ke WA"><i class="bi bi-share"></i> <span class="d-none d-md-inline">Share Struk</span></button>
@@ -1199,20 +1272,33 @@
 
       function toggleLunas(idSiswa, bln) {
         const idTagihan = idSiswa + "-" + bln;
-        const index = dataPembayaran.findIndex(p => p.idTagihan === idTagihan);
+        const isLunas = dataPembayaran.some(p => p.idTagihan === idTagihan);
         
-        if (index > -1) {
-            dataPembayaran.splice(index, 1);
-            sendToAPI('hapusPembayaran', { idTagihan: idTagihan });
-            Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Status diubah ke Belum Lunas', showConfirmButton: false, timer: 2000 });
-        } else {
-            const newBayar = { idTagihan: idTagihan, idSiswa: idSiswa, bulan: bln, status: 'Lunas' };
-            dataPembayaran.push(newBayar);
-            sendToAPI('tambahPembayaran', newBayar);
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tagihan ditandai Lunas!', showConfirmButton: false, timer: 2000 });
-        }
-        filterLaporan(); 
-        if (!document.getElementById("pw-detail-view").classList.contains("d-none")) renderDataWali();
+        const txtWarning = isLunas ? "Anda yakin ingin <b>MEMBATALKAN</b> status pelunasan untuk tagihan bulan ini?" : "Anda yakin ingin menandai tagihan bulan ini sebagai <b>LUNAS</b>?";
+        const btnLunas = isLunas ? "Ya, Batalkan Lunas" : "Ya, Tandai Lunas";
+        const iconType = isLunas ? "warning" : "question";
+
+        Swal.fire({ 
+            title: "Konfirmasi Pelunasan", html: txtWarning, icon: iconType, 
+            showCancelButton: true, confirmButtonColor: isLunas ? "#ef4444" : "#10b981", 
+            confirmButtonText: btnLunas, cancelButtonText: "Tutup" 
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (isLunas) {
+                    const index = dataPembayaran.findIndex(p => p.idTagihan === idTagihan);
+                    dataPembayaran.splice(index, 1);
+                    sendToAPI('hapusPembayaran', { idTagihan: idTagihan });
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Status diubah ke Belum Lunas', showConfirmButton: false, timer: 2000 });
+                } else {
+                    const newBayar = { idTagihan: idTagihan, idSiswa: idSiswa, bulan: bln, status: 'Lunas' };
+                    dataPembayaran.push(newBayar);
+                    sendToAPI('tambahPembayaran', newBayar);
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tagihan ditandai Lunas!', showConfirmButton: false, timer: 2000 });
+                }
+                filterLaporan(); 
+                if (!document.getElementById("pw-detail-view").classList.contains("d-none")) renderDataWali();
+            }
+        });
       }
 
       function cetakInvoice(idSiswa) {
@@ -1259,6 +1345,10 @@
         let statusText = isLunas ? "L U N A S" : "BELUM LUNAS";
         let statusColor = isLunas ? "#10b981" : "#ef4444";
 
+        let redaksiPelunasan = isLunas 
+            ? "Terima kasih banyak atas pelunasan administrasi bulan ini. Semoga ilmu yang didapat ananda bermanfaat! 🙏" 
+            : "Mohon kesediaannya untuk dapat menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖";
+
         const baseUrl = window.location.origin + window.location.pathname; 
         const simulatedWebLink = `${baseUrl}?id=${siswa.id}&bln=${bln}`;
 
@@ -1268,7 +1358,8 @@
             .replace(/\[REGULER\]/g, totalReg.toLocaleString("id-ID"))
             .replace(/\[OVERTIME\]/g, totalOver.toLocaleString("id-ID"))
             .replace(/\[GRAND_TOTAL\]/g, grandTotal.toLocaleString("id-ID"))
-            .replace(/\[LINK\]/g, simulatedWebLink);
+            .replace(/\[LINK\]/g, simulatedWebLink)
+            .replace(/\[REDAKSI_PELUNASAN\]/g, redaksiPelunasan);
 
         const strukNoteHtml = strukTemplateNote.replace(/\n/g, '<br>');
 
@@ -1336,18 +1427,17 @@
         let hpFormat = noHP.replace(/\D/g, ''); if(hpFormat.startsWith("0")) hpFormat = "62" + hpFormat.substring(1);
         const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
         
+        const a = document.createElement('a'); a.href = imgData; a.download = filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+
         Swal.fire({
-            title: 'Struk Selesai Dibuat',
-            text: 'Silakan Unduh Gambar Struk di bawah ini, lalu klik Buka WhatsApp.',
-            imageUrl: imgData, imageWidth: 250, imageAlt: 'Invoice Preview',
-            showDenyButton: true, confirmButtonText: '<i class="bi bi-download"></i> Unduh Struk', denyButtonText: '<i class="bi bi-whatsapp"></i> Buka WA', denyButtonColor: '#10b981'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const a = document.createElement('a'); a.href = imgData; a.download = filename;
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            } else if (result.isDenied) {
-                window.open(waUrl, '_blank');
-            }
+            title: 'Mengarahkan ke WhatsApp...',
+            text: 'Gambar struk telah terunduh. Silakan lampirkan gambar tersebut saat membalas via WA.',
+            icon: 'success',
+            timer: 3500,
+            showConfirmButton: false
+        }).then(() => {
+            window.open(waUrl, '_blank');
         });
       }
 
@@ -1361,10 +1451,15 @@
         let totalReg = 0, totalOver = 0;
         logs.forEach(l => { totalReg += l.reg; totalOver += l.over; });
         let grandTotal = totalReg + totalOver;
+        let isLunas = dataPembayaran.some(p => p.idSiswa === idSiswa && p.bulan === bln && p.status === 'Lunas');
 
         let hpFormat = siswa.hp.replace(/\D/g, ''); 
         if(hpFormat.startsWith("0")) hpFormat = "62" + hpFormat.substring(1);
         
+        let redaksiPelunasan = isLunas 
+            ? "Terima kasih banyak atas pelunasan administrasi bulan ini. Semoga ilmu yang didapat ananda bermanfaat! 🙏" 
+            : "Mohon kesediaannya untuk dapat menyelesaikan administrasi pembayaran tepat waktu. Terima kasih banyak atas kepercayaan Bpk/Ibu kepada Bimbel Bee. Semangat terus belajarnya! 📖";
+
         const baseUrl = window.location.origin + window.location.pathname; 
         const simulatedWebLink = `${baseUrl}?id=${siswa.id}&bln=${bln}`;
 
@@ -1374,7 +1469,8 @@
             .replace(/\[REGULER\]/g, totalReg.toLocaleString("id-ID"))
             .replace(/\[OVERTIME\]/g, totalOver.toLocaleString("id-ID"))
             .replace(/\[GRAND_TOTAL\]/g, grandTotal.toLocaleString("id-ID"))
-            .replace(/\[LINK\]/g, simulatedWebLink);
+            .replace(/\[LINK\]/g, simulatedWebLink)
+            .replace(/\[REDAKSI_PELUNASAN\]/g, redaksiPelunasan);
         
         const waUrl = `https://wa.me/${hpFormat}?text=${encodeURIComponent(textWA)}`;
         window.open(waUrl, '_blank');
@@ -1415,20 +1511,16 @@
         if (!siswa) return Swal.fire("Tidak Ditemukan", "Nama siswa tidak terdaftar.", "error");
 
         const { value: pin } = await Swal.fire({ 
-          title: "Masukkan PIN", 
-          input: "password", 
-          inputLabel: "PIN Siswa", 
-          inputPlaceholder: "Masukkan PIN", 
-          inputAttributes: { maxlength: 4, autocapitalize: "off", autocorrect: "off" }, 
+          title: "Masukkan PIN Keamanan", 
+          html: `<div class="input-icon-wrapper position-relative mx-auto" style="max-width: 250px;">
+                    <i class="bi bi-key position-absolute top-50 translate-middle-y" style="left: 15px; color: #64748b; z-index: 10;"></i>
+                    <input id="swal-pin" type="password" class="form-control ps-5 pe-5 text-center" placeholder="PIN Siswa" maxlength="4" style="height: 45px; font-size: 1.2rem; letter-spacing: 5px;">
+                    <i class="bi bi-eye-slash position-absolute top-50 translate-middle-y toggle-pw" style="right: 15px; z-index: 10; cursor:pointer;" onclick="const pw = document.getElementById('swal-pin'); if(pw.type==='password'){pw.type='text'; this.classList.replace('bi-eye-slash','bi-eye');}else{pw.type='password'; this.classList.replace('bi-eye','bi-eye-slash');}"></i>
+                 </div>`,
+          focusConfirm: false,
           showCancelButton: true,
-          didOpen: () => {
-            const inputSwal = Swal.getInput();
-            if(inputSwal) {
-              inputSwal.addEventListener('keydown', (e) => { 
-                if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } 
-              });
-            }
-          }
+          preConfirm: () => document.getElementById('swal-pin').value,
+          didOpen: () => { const inputSwal = document.getElementById('swal-pin'); if(inputSwal) { inputSwal.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); Swal.clickConfirm(); } }); } }
         });
         if (!pin) return; 
         if (pin !== siswa.pin) return Swal.fire("Oops", "PIN salah!", "error");
@@ -1491,8 +1583,8 @@
         const { value: formValues } = await Swal.fire({
           title: 'Login Admin',
           html:
-            '<input id="swal-input1" class="form-control mb-3" placeholder="Username (misal: admin_master)">' +
-            '<input id="swal-input2" type="password" class="form-control" placeholder="Password">',
+            '<div class="input-icon-wrapper mb-3 position-relative"><i class="bi bi-person position-absolute top-50 translate-middle-y" style="left: 15px; color: var(--text-muted);"></i><input id="swal-input1" class="form-control ps-5" placeholder="Username"></div>' +
+            '<div class="input-icon-wrapper position-relative"><i class="bi bi-key position-absolute top-50 translate-middle-y" style="left: 15px; color: var(--text-muted);"></i><input id="swal-input2" type="password" class="form-control ps-5 pe-5" placeholder="Password"><i class="bi bi-eye-slash position-absolute top-50 translate-middle-y toggle-pw" style="right: 15px; cursor: pointer; z-index: 10;" onclick="const pw = document.getElementById(\'swal-input2\'); if(pw.type===\'password\'){pw.type=\'text\'; this.classList.replace(\'bi-eye-slash\',\'bi-eye\');}else{pw.type=\'password\'; this.classList.replace(\'bi-eye\',\'bi-eye-slash\');}"></i></div>',
           focusConfirm: false,
           showCancelButton: true,
           confirmButtonText: 'Login',
